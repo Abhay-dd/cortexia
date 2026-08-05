@@ -1,91 +1,136 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowUpRight, Check } from "lucide-react";
 import { SERVICES } from "@/lib/constants";
-import SectionHeading from "@/components/ui/SectionHeading";
-import GradientOrb from "@/components/effects/GradientOrb";
-
-const containerVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.15 } },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" as const } },
-};
 
 export default function Services() {
+  const [activeTab, setActiveTab] = useState(0);
+
   return (
-    <section id="services" className="relative section-padding overflow-hidden">
-      <GradientOrb
-        className="-bottom-40 -left-40 z-0"
-        color1="rgba(37,99,235,0.08)"
-        color2="rgba(6,182,212,0.04)"
-        size={450}
-      />
-
-      <div className="container-custom relative z-10">
-        <SectionHeading
-          title="Our Services"
-          subtitle="End-to-end AI and software engineering services designed to accelerate your business transformation."
-        />
-
+    <section id="services" className="relative py-32 bg-[#030611] overflow-hidden border-t border-white/[0.06]">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10">
+        
+        {/* Section Index Marker */}
         <motion.div
-          className="grid md:grid-cols-2 gap-6"
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          className="flex items-center gap-4 mb-16 text-xs font-mono text-cyan-400 tracking-widest uppercase"
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
         >
-          {SERVICES.map((service) => (
-            <motion.div
-              key={service.title}
-              variants={cardVariants}
-              className="group relative rounded-2xl border border-border bg-card/40 backdrop-blur-sm p-8 transition-all duration-500 hover:-translate-y-1 hover:border-primary/25 overflow-hidden"
-            >
-              {/* Background gradient on hover */}
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-[0.03] transition-opacity duration-500`}
-              />
-
-              {/* Icon */}
-              <div
-                className={`inline-flex items-center justify-center w-14 h-14 rounded-xl bg-gradient-to-br ${service.gradient} mb-6 transition-transform duration-300 group-hover:scale-110`}
-              >
-                <service.icon className="w-7 h-7 text-white" />
-              </div>
-
-              {/* Title */}
-              <h3 className="font-heading text-xl font-bold mb-3">{service.title}</h3>
-
-              {/* Description */}
-              <p className="text-muted text-sm leading-relaxed mb-6">{service.description}</p>
-
-              {/* Features */}
-              <ul className="space-y-2 mb-8">
-                {service.features.map((feature) => (
-                  <li key={feature} className="flex items-center gap-2 text-sm text-muted">
-                    <span className={`w-1.5 h-1.5 rounded-full bg-gradient-to-r ${service.gradient} flex-shrink-0`} />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
-
-              {/* Learn More */}
-              <button className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary-light transition-colors group/btn">
-                Learn More
-                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-0.5 transition-transform" />
-              </button>
-
-              {/* Corner glow */}
-              <div
-                className={`absolute -bottom-10 -right-10 w-40 h-40 bg-gradient-to-br ${service.gradient} opacity-0 group-hover:opacity-[0.06] blur-3xl transition-opacity duration-500 rounded-full`}
-              />
-            </motion.div>
-          ))}
+          <span>03</span>
+          <span className="w-8 h-px bg-cyan-500/40" />
+          <span>CAPABILITIES & ARCHITECTURE</span>
         </motion.div>
+
+        {/* Section Header */}
+        <div className="max-w-3xl mb-16">
+          <h2 className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-white mb-6">
+            Autonomous Systems. Scalable Engineering.
+          </h2>
+          <p className="text-slate-400 text-lg font-light leading-relaxed">
+            We deliver enterprise AI solutions designed to integrate into high-stakes business operations.
+          </p>
+        </div>
+
+        {/* Interactive Capability Stage */}
+        <div className="grid lg:grid-cols-12 gap-8 items-start">
+          
+          {/* Left Column: Capability Selector Tabs */}
+          <div className="lg:col-span-5 space-y-3">
+            {SERVICES.map((service, index) => {
+              const Icon = service.icon;
+              const isActive = activeTab === index;
+              return (
+                <button
+                  key={service.title}
+                  onClick={() => setActiveTab(index)}
+                  className={`w-full text-left p-6 rounded-3xl transition-all duration-300 flex items-center justify-between border ${
+                    isActive
+                      ? "bg-white/[0.06] border-white/20 shadow-2xl"
+                      : "bg-transparent border-transparent hover:bg-white/[0.02] text-slate-400 hover:text-slate-200"
+                  }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className={`w-10 h-10 rounded-2xl flex items-center justify-center transition-colors ${
+                      isActive ? "bg-blue-500 text-white" : "bg-white/5 text-slate-400"
+                    }`}>
+                      <Icon className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className={`font-display text-lg font-semibold ${isActive ? "text-white" : "text-slate-300"}`}>
+                        {service.title}
+                      </h3>
+                      <p className="text-xs font-mono text-slate-500 mt-0.5">{service.features.length} Enterprise Modules</p>
+                    </div>
+                  </div>
+                  <ArrowUpRight className={`w-5 h-5 transition-transform ${isActive ? "text-blue-400 rotate-45" : "text-slate-600"}`} />
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Right Column: Display Stage */}
+          <div className="lg:col-span-7">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4 }}
+                className="glass-panel p-8 sm:p-10 rounded-3xl border border-white/10 relative overflow-hidden"
+              >
+                {/* Background Ambient Color Blob */}
+                <div className="absolute -top-20 -right-20 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+
+                <div className="relative z-10">
+                  <span className="font-mono text-xs text-blue-400 tracking-wider uppercase mb-2 block">
+                    SERVICE SPECIFICATION 0{activeTab + 1}
+                  </span>
+                  <h3 className="font-display text-3xl font-bold text-white mb-4">
+                    {SERVICES[activeTab].title}
+                  </h3>
+                  <p className="text-slate-300 text-base font-light leading-relaxed mb-8">
+                    {SERVICES[activeTab].description}
+                  </p>
+
+                  <h4 className="font-mono text-xs text-slate-400 uppercase tracking-widest mb-4">
+                    MODULE ARCHITECTURE
+                  </h4>
+                  <div className="grid sm:grid-cols-2 gap-3 mb-10">
+                    {SERVICES[activeTab].features.map((feature) => (
+                      <div
+                        key={feature}
+                        className="flex items-center gap-3 p-3.5 rounded-2xl bg-white/[0.03] border border-white/[0.06]"
+                      >
+                        <div className="w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400">
+                          <Check className="w-3.5 h-3.5" />
+                        </div>
+                        <span className="text-sm font-medium text-slate-200">{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <a
+                    href="#contact"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" });
+                    }}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-white text-black text-xs font-semibold hover:bg-slate-200 transition-all shadow-xl"
+                  >
+                    <span>Request Architecture Brief</span>
+                    <ArrowUpRight className="w-3.5 h-3.5" />
+                  </a>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+        </div>
+
       </div>
     </section>
   );

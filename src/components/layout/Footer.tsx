@@ -1,10 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowRight, Mail } from "lucide-react";
 import { COMPANY, FOOTER_LINKS, SOCIAL_LINKS } from "@/lib/constants";
 
-// Brand icons (not available in lucide-react)
 const LinkedinIcon = ({ className }: { className?: string }) => (
   <svg className={className} viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
 );
@@ -19,7 +16,6 @@ const socialIcons: Record<string, React.ElementType> = {
   linkedin: LinkedinIcon,
   github: GithubIcon,
   instagram: InstagramIcon,
-  mail: Mail,
 };
 
 export default function Footer() {
@@ -29,124 +25,36 @@ export default function Footer() {
   };
 
   return (
-    <footer className="relative border-t border-border bg-card/30">
-      {/* Gradient line at top */}
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
-
-      <div className="container-custom py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
-          {/* Brand */}
-          <div className="lg:col-span-1">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                <span className="font-heading font-bold text-white text-sm">C</span>
-              </div>
-              <span className="font-heading font-bold text-lg">
-                Cortexia<span className="text-primary">&nbsp;AI</span>
-              </span>
-            </div>
-            <p className="text-muted text-sm leading-relaxed mb-6">
-              {COMPANY.description.slice(0, 150)}...
+    <footer className="relative bg-[#030611] border-t border-white/[0.08] py-20">
+      <div className="max-w-7xl mx-auto px-6 sm:px-8">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-12 pb-16 border-b border-white/10">
+          <div>
+            <span className="font-display font-bold text-2xl tracking-tight text-white block mb-2">
+              CORTEXIA<span className="text-blue-500 font-mono text-sm ml-1">AI</span>
+            </span>
+            <p className="text-slate-400 text-sm font-light max-w-sm">
+              Engineering Intelligence. Empowering Businesses.
             </p>
-            <div className="flex gap-3">
-              {SOCIAL_LINKS.map((link) => {
-                const Icon = socialIcons[link.icon];
-                return (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="w-9 h-9 rounded-lg border border-border flex items-center justify-center text-muted hover:text-foreground hover:border-primary/30 hover:bg-primary/5 transition-all duration-200"
-                    aria-label={link.label}
-                  >
-                    <Icon className="w-4 h-4" />
-                  </a>
-                );
-              })}
-            </div>
           </div>
 
-          {/* Quick Links */}
-          <div>
-            <h4 className="font-heading font-semibold mb-4 text-sm uppercase tracking-wider text-muted">
-              Quick Links
-            </h4>
-            <ul className="space-y-3">
-              {FOOTER_LINKS.quickLinks.map((link) => (
-                <li key={link.label}>
-                  <button
-                    onClick={() => handleNavClick(link.href)}
-                    className="text-sm text-muted hover:text-foreground transition-colors duration-200"
-                  >
-                    {link.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Services */}
-          <div>
-            <h4 className="font-heading font-semibold mb-4 text-sm uppercase tracking-wider text-muted">
-              Services
-            </h4>
-            <ul className="space-y-3">
-              {FOOTER_LINKS.services.map((link) => (
-                <li key={link.label}>
-                  <button
-                    onClick={() => handleNavClick(link.href)}
-                    className="text-sm text-muted hover:text-foreground transition-colors duration-200"
-                  >
-                    {link.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Contact */}
-          <div>
-            <h4 className="font-heading font-semibold mb-4 text-sm uppercase tracking-wider text-muted">
-              Get in Touch
-            </h4>
-            <ul className="space-y-3 text-sm text-muted">
-              <li>
-                <a
-                  href={`mailto:${COMPANY.email}`}
-                  className="hover:text-foreground transition-colors"
-                >
-                  {COMPANY.email}
-                </a>
-              </li>
-              <li>{COMPANY.address}</li>
-            </ul>
-            <a
-              href="#contact"
-              onClick={(e) => {
-                e.preventDefault();
-                handleNavClick("#contact");
-              }}
-              className="inline-flex items-center gap-2 mt-6 text-sm text-primary hover:text-primary-light transition-colors group"
-            >
-              Book a Consultation
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-            </a>
+          <div className="flex flex-wrap gap-8 text-xs font-mono text-slate-400">
+            {FOOTER_LINKS.quickLinks.map((link) => (
+              <button
+                key={link.label}
+                onClick={() => handleNavClick(link.href)}
+                className="hover:text-white transition-colors"
+              >
+                {link.label}
+              </button>
+            ))}
           </div>
         </div>
 
-        {/* Bottom */}
-        <div className="mt-16 pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-muted">
-            © {new Date().getFullYear()} Cortexia AI. All rights reserved.
-          </p>
+        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-slate-500">
+          <span>© {new Date().getFullYear()} CORTEXIA AI INC. ALL RIGHTS RESERVED.</span>
           <div className="flex gap-6">
-            <button className="text-xs text-muted hover:text-foreground transition-colors">
-              Privacy Policy
-            </button>
-            <button className="text-xs text-muted hover:text-foreground transition-colors">
-              Terms of Service
-            </button>
+            <button className="hover:text-slate-300 transition-colors">PRIVACY POLICY</button>
+            <button className="hover:text-slate-300 transition-colors">TERMS OF SERVICE</button>
           </div>
         </div>
       </div>

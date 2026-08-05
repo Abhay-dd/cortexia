@@ -10,7 +10,6 @@ import Work from "@/components/sections/Work";
 import Products from "@/components/sections/Products";
 import Contact from "@/components/sections/Contact";
 
-// Lazy-load heavy visual effects to improve initial load
 const ParticleBackground = dynamic(
   () => import("@/components/effects/ParticleBackground"),
   { ssr: false }
@@ -22,10 +21,6 @@ const ScrollProgress = dynamic(
   () => import("@/components/effects/ScrollProgress"),
   { ssr: false }
 );
-const FloatingShapes = dynamic(
-  () => import("@/components/effects/FloatingShapes"),
-  { ssr: false }
-);
 const LoadingScreen = dynamic(
   () => import("@/components/layout/LoadingScreen"),
   { ssr: false }
@@ -33,16 +28,18 @@ const LoadingScreen = dynamic(
 
 export default function Home() {
   return (
-    <>
+    <div className="relative min-h-screen bg-[#030611] selection:bg-blue-500/30 selection:text-white">
+      {/* Film Grain Texture Overlay */}
+      <div className="film-grain" />
+
       <LoadingScreen />
       <ScrollProgress />
       <ParticleBackground />
       <MouseGlow />
-      <FloatingShapes />
 
       <Navbar />
 
-      <main>
+      <main className="relative z-10">
         <Hero />
         <About />
         <Services />
@@ -52,6 +49,6 @@ export default function Home() {
       </main>
 
       <Footer />
-    </>
+    </div>
   );
 }

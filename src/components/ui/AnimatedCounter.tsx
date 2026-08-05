@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion, useInView } from "framer-motion";
+import { useInView } from "framer-motion";
 
 interface AnimatedCounterProps {
   value: number;
@@ -18,7 +18,7 @@ export default function AnimatedCounter({
 }: AnimatedCounterProps) {
   const [count, setCount] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true, margin: "-50px" });
 
   useEffect(() => {
     if (!isInView) return;
@@ -29,8 +29,6 @@ export default function AnimatedCounter({
     const animate = (timestamp: number) => {
       if (!startTime) startTime = timestamp;
       const progress = Math.min((timestamp - startTime) / (duration * 1000), 1);
-
-      // Ease out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
       setCount(eased * value);
 
@@ -46,19 +44,12 @@ export default function AnimatedCounter({
   const displayValue = value % 1 !== 0 ? count.toFixed(1) : Math.floor(count).toString();
 
   return (
-    <motion.div
-      ref={ref}
-      className="text-center"
-      initial={{ opacity: 0, scale: 0.8 }}
-      whileInView={{ opacity: 1, scale: 1 }}
-      viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.5 }}
-    >
-      <div className="font-heading text-4xl md:text-5xl font-bold gradient-text">
+    <div ref={ref}>
+      <div className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-white mb-1">
         {displayValue}
-        {suffix}
+        <span className="text-blue-400 font-mono text-3xl">{suffix}</span>
       </div>
-      <div className="mt-2 text-muted text-sm">{label}</div>
-    </motion.div>
+      <div className="text-xs font-mono text-slate-400 uppercase tracking-wider">{label}</div>
+    </div>
   );
 }

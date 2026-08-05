@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowUpRight } from "lucide-react";
 import { NAV_LINKS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
@@ -11,12 +11,11 @@ export default function Navbar() {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    const handleScroll = () => setIsScrolled(window.scrollY > 40);
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = isMobileOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -25,118 +24,113 @@ export default function Navbar() {
   const handleNavClick = (href: string) => {
     setIsMobileOpen(false);
     const el = document.querySelector(href);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth" });
-    }
+    if (el) el.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <>
-      <motion.nav
-        className={cn(
-          "fixed top-0 left-0 right-0 z-50 transition-all duration-500",
-          isScrolled
-            ? "glass shadow-lg shadow-black/10"
-            : "bg-transparent"
-        )}
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        <div className="container-custom flex items-center justify-between h-20">
-          {/* Logo */}
+      <header className="fixed top-0 left-0 right-0 z-50 pt-4 px-4 sm:px-8 pointer-events-none">
+        <motion.div
+          className={cn(
+            "max-w-6xl mx-auto rounded-full pointer-events-auto transition-all duration-500 flex items-center justify-between px-6 py-3.5",
+            isScrolled
+              ? "bg-[#0b1120]/80 backdrop-blur-xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
+              : "bg-transparent border border-transparent"
+          )}
+          initial={{ y: -60, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        >
+          {/* Logo Mark */}
           <button
             onClick={() => handleNavClick("#home")}
-            className="flex items-center gap-2 group"
+            className="flex items-center gap-3 group text-left"
           >
-            <div className="relative w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <span className="font-heading font-bold text-white text-lg">C</span>
-              <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-primary to-accent opacity-0 group-hover:opacity-60 blur-md transition-opacity duration-300" />
+            <div className="relative w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 via-primary to-cyan-500 p-[1px] shadow-[0_0_15px_rgba(59,130,246,0.3)]">
+              <div className="w-full h-full rounded-[7px] bg-[#030611] flex items-center justify-center">
+                <span className="font-display font-bold text-white text-sm tracking-tighter">C</span>
+              </div>
             </div>
-            <span className="font-heading font-bold text-lg tracking-tight">
-              Cortexia<span className="text-primary">&nbsp;AI</span>
-            </span>
+            <div className="flex flex-col">
+              <span className="font-display font-bold text-base tracking-tight text-white group-hover:text-blue-400 transition-colors">
+                CORTEXIA<span className="text-blue-500 font-mono text-xs ml-1">AI</span>
+              </span>
+            </div>
           </button>
 
-          {/* Desktop Links */}
-          <div className="hidden lg:flex items-center gap-8">
+          {/* Desktop Navigation Links */}
+          <nav className="hidden lg:flex items-center gap-1.5 bg-white/[0.03] border border-white/[0.06] rounded-full px-4 py-1.5 backdrop-blur-md">
             {NAV_LINKS.map((link) => (
               <button
                 key={link.href}
                 onClick={() => handleNavClick(link.href)}
-                className="relative text-sm text-muted hover:text-foreground transition-colors duration-200 group"
+                className="px-4 py-1.5 rounded-full text-xs font-medium text-slate-300 hover:text-white hover:bg-white/[0.08] transition-all duration-300"
               >
                 {link.label}
-                <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-gradient-to-r from-primary to-accent group-hover:w-full transition-all duration-300" />
               </button>
             ))}
-          </div>
+          </nav>
 
-          {/* CTA + Mobile Toggle */}
-          <div className="flex items-center gap-4">
+          {/* CTA & Mobile Menu Toggle */}
+          <div className="flex items-center gap-3">
             <a
               href="#contact"
               onClick={(e) => {
                 e.preventDefault();
                 handleNavClick("#contact");
               }}
-              className="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium bg-gradient-to-r from-primary to-primary-light text-white hover:shadow-[0_0_25px_rgba(37,99,235,0.3)] transition-all duration-300 group"
+              className="hidden sm:inline-flex items-center gap-1.5 px-5 py-2 rounded-full text-xs font-semibold bg-white text-black hover:bg-slate-200 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-[1.02] group"
             >
-              Book Consultation
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              <span>Get in Touch</span>
+              <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </a>
 
             <button
               onClick={() => setIsMobileOpen(!isMobileOpen)}
-              className="lg:hidden p-2 text-muted hover:text-foreground transition-colors"
-              aria-label="Toggle menu"
+              className="lg:hidden p-2 text-slate-300 hover:text-white rounded-full bg-white/5 border border-white/10"
+              aria-label="Toggle Navigation"
             >
-              {isMobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
-        </div>
-      </motion.nav>
+        </motion.div>
+      </header>
 
-      {/* Mobile Menu */}
+      {/* Mobile Drawer Overlay */}
       <AnimatePresence>
         {isMobileOpen && (
           <motion.div
-            className="fixed inset-0 z-40 lg:hidden"
+            className="fixed inset-0 z-40 lg:hidden flex flex-col justify-center px-6"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
           >
             <div
-              className="absolute inset-0 bg-background/80 backdrop-blur-md"
+              className="absolute inset-0 bg-[#030611]/90 backdrop-blur-2xl"
               onClick={() => setIsMobileOpen(false)}
             />
             <motion.div
-              className="absolute top-20 left-4 right-4 glass rounded-2xl p-6"
-              initial={{ opacity: 0, y: -20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -20, scale: 0.95 }}
-              transition={{ duration: 0.3 }}
+              className="relative z-10 glass-panel rounded-3xl p-8 max-w-sm mx-auto w-full border border-white/10"
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
             >
-              <div className="flex flex-col gap-2">
-                {NAV_LINKS.map((link, i) => (
-                  <motion.button
+              <div className="flex flex-col gap-3">
+                {NAV_LINKS.map((link) => (
+                  <button
                     key={link.href}
                     onClick={() => handleNavClick(link.href)}
-                    className="text-left px-4 py-3 rounded-xl text-muted hover:text-foreground hover:bg-white/5 transition-all duration-200"
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
+                    className="text-left px-4 py-3 rounded-2xl text-lg font-display text-slate-300 hover:text-white hover:bg-white/5 transition-all"
                   >
                     {link.label}
-                  </motion.button>
+                  </button>
                 ))}
                 <button
                   onClick={() => handleNavClick("#contact")}
-                  className="mt-4 w-full flex items-center justify-center gap-2 px-5 py-3 rounded-full text-sm font-medium bg-gradient-to-r from-primary to-primary-light text-white"
+                  className="mt-6 w-full py-3.5 rounded-2xl bg-white text-black font-semibold text-sm flex items-center justify-center gap-2"
                 >
-                  Book Consultation
-                  <ArrowRight className="w-4 h-4" />
+                  Get in Touch
+                  <ArrowUpRight className="w-4 h-4" />
                 </button>
               </div>
             </motion.div>
