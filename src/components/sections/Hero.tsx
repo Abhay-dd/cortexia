@@ -1,228 +1,229 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowUpRight, Sparkles, ChevronDown } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { useEffect, useRef } from "react";
 
-// Interactive Canvas AI Holographic Core Sphere Visual
-function HolographicCoreVisual() {
+/* Ambient radial canvas — subtle volumetric depth, no sci-fi clutter */
+function AmbientOrb() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let animationId: number;
-    let rotation = 0;
+    let raf: number;
+    let t = 0;
 
-    const resize = () => {
-      canvas.width = 500;
-      canvas.height = 500;
-    };
-
-    const drawOrb = () => {
-      const w = canvas.width;
-      const h = canvas.height;
-      const cx = w / 2;
-      const cy = h / 2;
+    const draw = () => {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+      const w = canvas.width, h = canvas.height;
+      const cx = w * 0.5, cy = h * 0.5;
 
       ctx.clearRect(0, 0, w, h);
+      t += 0.004;
 
-      rotation += 0.006;
+      // Outer soft glow rings
+      for (let i = 3; i >= 0; i--) {
+        const radius = 140 + i * 60 + Math.sin(t + i) * 20;
+        const alpha = 0.04 - i * 0.008;
+        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+        grad.addColorStop(0, `rgba(232, 97, 26, ${alpha * 2})`);
+        grad.addColorStop(0.5, `rgba(27, 42, 74, ${alpha})`);
+        grad.addColorStop(1, "rgba(12, 20, 34, 0)");
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, w, h);
+      }
 
-      // Volumetric Core Glow
-      const bgGlow = ctx.createRadialGradient(cx, cy, 20, cx, cy, 220);
-      bgGlow.addColorStop(0, "rgba(96, 165, 250, 0.25)");
-      bgGlow.addColorStop(0.4, "rgba(59, 130, 246, 0.1)");
-      bgGlow.addColorStop(1, "rgba(3, 6, 17, 0)");
-      ctx.fillStyle = bgGlow;
-      ctx.fillRect(0, 0, w, h);
-
-      // Rotating Energy Orbital Rings
-      for (let ring = 0; ring < 4; ring++) {
-        const radius = 80 + ring * 35;
-        const speed = (ring % 2 === 0 ? 1 : -1) * (0.8 + ring * 0.2);
-        const currentRot = rotation * speed + ring;
-
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.rotate(currentRot);
-        ctx.scale(1, 0.35 + ring * 0.1);
+      // Rotating arcs (like the logo swooshes)
+      for (let ring = 0; ring < 5; ring++) {
+        const r = 80 + ring * 45;
+        const startAngle = t * (ring % 2 === 0 ? 0.5 : -0.4) + ring;
+        const endAngle = startAngle + Math.PI * (0.4 + ring * 0.1);
 
         ctx.beginPath();
-        ctx.arc(0, 0, radius, 0, Math.PI * 2);
-        ctx.strokeStyle = ring % 2 === 0 ? "rgba(96, 165, 250, 0.4)" : "rgba(6, 182, 212, 0.3)";
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([15, 25, 45, 10]);
+        ctx.arc(cx, cy, r, startAngle, endAngle);
+        ctx.strokeStyle = ring % 3 === 0
+          ? `rgba(232, 97, 26, ${0.25 - ring * 0.04})`
+          : `rgba(176, 196, 222, ${0.08 - ring * 0.01})`;
+        ctx.lineWidth = ring === 0 ? 2.5 : 1.2;
+        ctx.lineCap = "round";
         ctx.stroke();
-
-        ctx.restore();
       }
 
-      // Center High-Density Core Particles
-      const particleCount = 60;
-      for (let i = 0; i < particleCount; i++) {
-        const angle = (i / particleCount) * Math.PI * 2 + rotation * 2;
-        const dist = 40 + Math.sin(rotation * 3 + i) * 25;
-        const px = cx + Math.cos(angle) * dist;
-        const py = cy + Math.sin(angle) * dist * 0.7;
+      // Center glowing dot
+      const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 30);
+      cg.addColorStop(0, "rgba(232, 97, 26, 0.6)");
+      cg.addColorStop(1, "rgba(232, 97, 26, 0)");
+      ctx.fillStyle = cg;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 30, 0, Math.PI * 2);
+      ctx.fill();
 
-        const size = 1.5 + Math.sin(i + rotation * 4) * 1;
-        const opacity = 0.4 + Math.sin(rotation * 2 + i) * 0.4;
-
-        ctx.beginPath();
-        ctx.arc(px, py, size, 0, Math.PI * 2);
-        ctx.fillStyle = i % 3 === 0 ? `rgba(255, 255, 255, ${opacity})` : `rgba(96, 165, 250, ${opacity})`;
-        ctx.fill();
-      }
-
-      animationId = requestAnimationFrame(drawOrb);
+      raf = requestAnimationFrame(draw);
     };
 
-    resize();
-    drawOrb();
+    draw();
+    const resizeObserver = new ResizeObserver(draw);
+    resizeObserver.observe(canvas);
 
-    return () => cancelAnimationFrame(animationId);
+    return () => {
+      cancelAnimationFrame(raf);
+      resizeObserver.disconnect();
+    };
   }, []);
 
   return (
-    <div className="relative w-[340px] h-[340px] sm:w-[460px] sm:h-[460px] flex items-center justify-center">
-      <canvas ref={canvasRef} className="w-full h-full" />
-
-      {/* Floating Hologram Label */}
-      <motion.div
-        className="absolute bottom-6 left-1/2 -translate-x-1/2 glass-panel px-5 py-2.5 rounded-full border border-white/10 flex items-center gap-3 shadow-2xl"
-        animate={{ y: [-4, 4, -4] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-      >
-        <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
-        <span className="font-mono text-xs text-slate-300 tracking-wider">CORTEXIA ARCHITECTURE v3.0</span>
-      </motion.div>
-    </div>
+    <canvas
+      ref={canvasRef}
+      className="w-full h-full"
+      aria-hidden="true"
+    />
   );
 }
 
+const STATS = [
+  { value: "50+", label: "Projects Delivered" },
+  { value: "30+", label: "AI Systems Deployed" },
+  { value: "99.9%", label: "Uptime SLA" },
+];
+
 export default function Hero() {
-  const handleScrollToNext = () => {
-    const el = document.querySelector("#about");
-    if (el) el.scrollIntoView({ behavior: "smooth" });
-  };
+  const scrollTo = (id: string) => document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
 
   return (
     <section
       id="home"
-      className="relative min-h-screen flex flex-col justify-between pt-36 pb-12 overflow-hidden bg-[#030611] bg-mesh-grid"
+      className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-[#0C1422] bg-grid pt-20"
     >
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 w-full my-auto z-10">
-        
-        {/* Editorial Pill Tag */}
-        <motion.div
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/[0.03] backdrop-blur-md text-xs font-mono tracking-wider text-slate-400 mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <Sparkles className="w-3.5 h-3.5 text-blue-400" />
-          <span>NEXT-GENERATION AI ENGINEERING</span>
-        </motion.div>
+      {/* Background ambient gradient from bottom-left */}
+      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#E8611A]/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-1/3 right-0 w-[400px] h-[400px] bg-[#1B2A4A]/60 rounded-full blur-[100px] pointer-events-none" />
 
-        {/* Asymmetric Editorial Grid */}
-        <div className="grid lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          
-          {/* Main Typography Column */}
-          <div className="lg:col-span-7">
-            <motion.h1
-              className="font-display text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tighter leading-[0.95] text-white"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+      <div className="container relative z-10 py-20">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
+
+          {/* LEFT — Pure Typography + CTA */}
+          <div>
+            {/* Overline */}
+            <motion.div
+              className="label mb-6"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5 }}
             >
-              ENGINEERING <br />
-              <span className="gradient-accent">INTELLIGENCE.</span> <br />
-              <span className="text-slate-400 font-light italic">EMPOWERING</span> BUSINESSES.
+              AI Engineering Company
+            </motion.div>
+
+            {/* Headline */}
+            <motion.h1
+              className="font-display text-[clamp(2.4rem,5vw,4.5rem)] font-bold leading-[1.05] text-white mb-6"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.65, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            >
+              Engineering <span className="text-gradient-orange">Intelligence.</span>{" "}
+              <br />
+              Empowering{" "}
+              <span className="text-gradient-orange">Businesses.</span>
             </motion.h1>
 
-            {/* Minimalist Editorial Paragraph */}
+            {/* Subheading */}
             <motion.p
-              className="mt-8 text-slate-400 text-lg sm:text-xl max-w-xl font-light leading-relaxed text-balance"
-              initial={{ opacity: 0, y: 20 }}
+              className="text-[#8896B0] text-lg font-light leading-relaxed max-w-[500px] mb-10"
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.6, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
             >
-              We engineer custom artificial intelligence, autonomous agentic systems, and 
-              enterprise cloud platforms built for businesses ready to dominate their industry.
+              We build custom AI solutions, intelligent automation engines, and enterprise software
+              platforms that transform how modern businesses operate and scale.
             </motion.p>
 
-            {/* Premium CTAs */}
+            {/* CTAs */}
             <motion.div
-              className="mt-10 flex flex-wrap items-center gap-4"
-              initial={{ opacity: 0, y: 20 }}
+              className="flex flex-wrap gap-4 mb-16"
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.5, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <a
-                href="#services"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.querySelector("#services")?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="group relative inline-flex items-center gap-3 px-8 py-4 rounded-full bg-white text-black text-sm font-semibold hover:bg-slate-200 transition-all duration-300 shadow-[0_0_30px_rgba(255,255,255,0.25)] hover:scale-[1.02]"
+              <button
+                onClick={() => scrollTo("#services")}
+                className="btn-primary"
               >
-                <span>Explore Capability</span>
-                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-              </a>
-
-              <a
-                href="#work"
-                onClick={(e) => {
-                  e.preventDefault();
-                  document.querySelector("#work")?.scrollIntoView({ behavior: "smooth" });
-                }}
-                className="inline-flex items-center gap-2 px-8 py-4 rounded-full border border-white/15 bg-white/[0.03] text-white text-sm font-semibold hover:bg-white/[0.08] hover:border-white/30 transition-all duration-300 backdrop-blur-md"
+                Explore Services
+                <ArrowRight className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => scrollTo("#work")}
+                className="btn-secondary"
               >
-                <span>Selected Work</span>
-              </a>
+                View Our Work
+              </button>
             </motion.div>
-          </div>
 
-          {/* Right Column: Holographic AI Core Visual */}
-          <div className="lg:col-span-5 flex justify-center lg:justify-end">
+            {/* Stats Row */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.85 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+              className="flex gap-10 pt-6 border-t border-white/[0.08]"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
             >
-              <HolographicCoreVisual />
+              {STATS.map((s) => (
+                <div key={s.label}>
+                  <div className="font-display text-2xl font-bold text-white">{s.value}</div>
+                  <div className="text-xs text-[#4F617A] mt-0.5 font-medium">{s.label}</div>
+                </div>
+              ))}
             </motion.div>
           </div>
+
+          {/* RIGHT — Ambient Visual */}
+          <motion.div
+            className="relative h-[480px] w-full flex items-center justify-center"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 1, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          >
+            {/* Outer ring decorative border */}
+            <div className="absolute inset-8 rounded-full border border-white/[0.04]" />
+            <div className="absolute inset-16 rounded-full border border-[#E8611A]/10" />
+
+            <AmbientOrb />
+
+            {/* Floating status badge */}
+            <motion.div
+              className="absolute bottom-16 left-8 card rounded-xl p-4 border border-[#E8611A]/20"
+              animate={{ y: [0, -8, 0] }}
+              transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <div className="flex items-center gap-3">
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <div>
+                  <div className="text-xs text-white font-semibold">AI Engine Active</div>
+                  <div className="text-[10px] text-[#4F617A] mt-0.5">cortexia-core v3.0</div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Floating metric badge */}
+            <motion.div
+              className="absolute top-20 right-8 card rounded-xl p-4 border border-[#E8611A]/20"
+              animate={{ y: [0, 6, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+            >
+              <div className="text-xs text-[#8896B0]">Model Accuracy</div>
+              <div className="font-display text-xl font-bold text-white">99.4%</div>
+            </motion.div>
+          </motion.div>
 
         </div>
-
       </div>
 
-      {/* Bottom Scroll Indicator */}
-      <motion.div
-        className="max-w-7xl mx-auto px-6 sm:px-8 w-full flex justify-between items-end z-10 pt-12"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8, duration: 1 }}
-      >
-        <div className="flex items-center gap-8 text-xs font-mono text-slate-500">
-          <span>01 / PREMIER AI LAB</span>
-          <span className="hidden sm:inline">SAN FRANCISCO, CA</span>
-        </div>
-
-        <button
-          onClick={handleScrollToNext}
-          className="flex items-center gap-2 text-xs font-mono text-slate-400 hover:text-white transition-colors group"
-        >
-          <span>SCROLL TO EXPLORE</span>
-          <ChevronDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
-        </button>
-      </motion.div>
+      {/* Bottom fade */}
+      <div className="absolute bottom-0 inset-x-0 h-24 bg-gradient-to-t from-[#0C1422] to-transparent pointer-events-none" />
     </section>
   );
 }

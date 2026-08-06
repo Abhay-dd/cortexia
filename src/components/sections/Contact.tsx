@@ -5,178 +5,148 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ArrowUpRight, CheckCircle2, Mail, MapPin } from "lucide-react";
-import { COMPANY } from "@/lib/constants";
+import { ArrowRight, CheckCircle, Mail, MapPin } from "lucide-react";
 
-const contactSchema = z.object({
-  name: z.string().min(2, "Name required"),
+const schema = z.object({
+  name: z.string().min(2, "Name is required"),
   email: z.string().email("Valid email required"),
-  company: z.string().optional(),
-  phone: z.string().optional(),
   projectType: z.string().min(1, "Please select a capability"),
-  budget: z.string().optional(),
   message: z.string().min(10, "Message must be at least 10 characters"),
 });
 
-type ContactFormData = z.infer<typeof contactSchema>;
+type FormData = z.infer<typeof schema>;
 
-const projectTypes = [
+const CAPABILITIES = [
   "Artificial Intelligence / ML",
-  "Workflow Automation",
-  "Software Development",
+  "Intelligent Automation",
+  "Software Engineering",
   "Cloud & DevOps Architecture",
   "Executive Advisory",
 ];
 
-const budgetRanges = [
-  "$10,000 - $25,000",
-  "$25,000 - $75,000",
-  "$75,000 - $150,000",
-  "$150,000+",
-];
-
 export default function Contact() {
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<ContactFormData>({
-    resolver: zodResolver(contactSchema),
-  });
+  } = useForm<FormData>({ resolver: zodResolver(schema) });
 
-  const onSubmit = async (data: ContactFormData) => {
-    await new Promise((r) => setTimeout(r, 1200));
-    console.log("Submitted:", data);
-    setIsSubmitted(true);
+  const onSubmit = async (data: FormData) => {
+    await new Promise((r) => setTimeout(r, 900));
+    console.log("Contact form submitted:", data);
+    setSubmitted(true);
     reset();
-    setTimeout(() => setIsSubmitted(false), 6000);
+    setTimeout(() => setSubmitted(false), 5000);
   };
 
-  const inputStyle =
-    "w-full px-5 py-4 rounded-2xl bg-white/[0.03] border border-white/10 text-white text-sm placeholder:text-slate-500 focus:outline-none focus:border-blue-400 focus:bg-white/[0.05] transition-all";
+  const input =
+    "w-full px-4 py-3.5 rounded-xl bg-[#111D34] border border-white/[0.08] text-white text-sm placeholder:text-[#4F617A] focus:outline-none focus:border-[#E8611A]/50 focus:bg-[#1B2A4A] transition-all duration-200";
 
   return (
-    <section id="contact" className="relative py-36 bg-[#030611] overflow-hidden border-t border-white/[0.06]">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10">
-        
-        {/* Section Index Marker */}
-        <motion.div
-          className="flex items-center gap-4 mb-16 text-xs font-mono text-blue-400 tracking-widest uppercase"
-          initial={{ opacity: 0, x: -20 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-        >
-          <span>06</span>
-          <span className="w-8 h-px bg-blue-500/40" />
-          <span>INITIATE DIALOGUE</span>
-        </motion.div>
+    <section id="contact" className="section bg-[#0C1422]">
+      <div className="container">
 
-        <div className="grid lg:grid-cols-12 gap-16 items-start">
-          
-          {/* Left Column: Editorial Headline & Details */}
-          <div className="lg:col-span-5 space-y-8">
-            <h2 className="font-display text-4xl sm:text-6xl font-bold tracking-tight text-white leading-[1.02]">
-              Let&apos;s build the future together.
+        <div className="grid lg:grid-cols-2 gap-16 items-start">
+
+          {/* Left */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="label mb-5">Get In Touch</div>
+            <h2 className="font-display text-[clamp(2rem,3.5vw,3rem)] font-bold text-white leading-[1.1] mb-5">
+              Let&apos;s build something extraordinary together.
             </h2>
-            <p className="text-slate-400 text-lg font-light leading-relaxed">
-              Partner with Cortexia AI to engineer custom intelligence, automate core workflows, 
-              and build scalable digital products.
+            <p className="text-[#8896B0] font-light leading-relaxed mb-10">
+              Partner with Cortexia AI to engineer custom intelligence, automate your core workflows, 
+              and ship enterprise software that scales.
             </p>
 
-            <div className="space-y-4 pt-6 border-t border-white/10 text-sm font-mono text-slate-300">
-              <div className="flex items-center gap-3">
-                <Mail className="w-4 h-4 text-blue-400" />
-                <a href={`mailto:${COMPANY.email}`} className="hover:text-white transition-colors">
-                  {COMPANY.email}
+            <div className="space-y-4">
+              <div className="flex items-center gap-3 text-sm">
+                <div className="w-8 h-8 rounded-lg bg-[#E8611A]/10 border border-[#E8611A]/20 flex items-center justify-center">
+                  <Mail className="w-4 h-4 text-[#E8611A]" />
+                </div>
+                <a href="mailto:hello@cortexia.ai" className="text-[#8896B0] hover:text-white transition-colors">
+                  hello@cortexia.ai
                 </a>
               </div>
-              <div className="flex items-center gap-3">
-                <MapPin className="w-4 h-4 text-blue-400" />
-                <span>{COMPANY.address}</span>
+              <div className="flex items-center gap-3 text-sm">
+                <div className="w-8 h-8 rounded-lg bg-[#E8611A]/10 border border-[#E8611A]/20 flex items-center justify-center">
+                  <MapPin className="w-4 h-4 text-[#E8611A]" />
+                </div>
+                <span className="text-[#8896B0]">San Francisco, CA</span>
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          {/* Right Column: Form */}
-          <div className="lg:col-span-7">
-            <div className="glass-panel p-8 sm:p-12 rounded-3xl border border-white/10 relative">
-              {isSubmitted ? (
-                <div className="py-16 text-center space-y-4">
-                  <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto" />
-                  <h3 className="font-display text-2xl font-bold text-white">Message Transmitted</h3>
-                  <p className="text-slate-400 text-sm font-light">Our engineering team will respond within 24 hours.</p>
+          {/* Right — Form */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+          >
+            <div className="card rounded-2xl p-8">
+              {submitted ? (
+                <div className="py-10 text-center space-y-3">
+                  <CheckCircle className="w-12 h-12 text-emerald-400 mx-auto" />
+                  <h3 className="font-display text-xl font-bold text-white">Message Received</h3>
+                  <p className="text-[#8896B0] text-sm font-light">We&apos;ll be in touch within 24 hours.</p>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                  <div className="grid sm:grid-cols-2 gap-6">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                  <div className="grid sm:grid-cols-2 gap-5">
                     <div>
-                      <label className="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">
-                        NAME *
-                      </label>
-                      <input type="text" placeholder="John Doe" className={inputStyle} {...register("name")} />
+                      <label className="block text-xs font-mono text-[#4F617A] uppercase tracking-wider mb-2">Name *</label>
+                      <input type="text" placeholder="John Doe" className={input} {...register("name")} />
                       {errors.name && <p className="text-xs text-red-400 mt-1 font-mono">{errors.name.message}</p>}
                     </div>
-
                     <div>
-                      <label className="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">
-                        EMAIL *
-                      </label>
-                      <input type="email" placeholder="john@company.com" className={inputStyle} {...register("email")} />
+                      <label className="block text-xs font-mono text-[#4F617A] uppercase tracking-wider mb-2">Email *</label>
+                      <input type="email" placeholder="john@company.com" className={input} {...register("email")} />
                       {errors.email && <p className="text-xs text-red-400 mt-1 font-mono">{errors.email.message}</p>}
                     </div>
                   </div>
 
-                  <div className="grid sm:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">
-                        COMPANY
-                      </label>
-                      <input type="text" placeholder="Acme Inc" className={inputStyle} {...register("company")} />
-                    </div>
-
-                    <div>
-                      <label className="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">
-                        CAPABILITY AREA *
-                      </label>
-                      <select className={`${inputStyle} appearance-none`} {...register("projectType")} defaultValue="">
-                        <option value="" disabled className="bg-[#0b1120]">Select Capability</option>
-                        {projectTypes.map((t) => (
-                          <option key={t} value={t} className="bg-[#0b1120] text-white">{t}</option>
-                        ))}
-                      </select>
-                      {errors.projectType && <p className="text-xs text-red-400 mt-1 font-mono">{errors.projectType.message}</p>}
-                    </div>
+                  <div>
+                    <label className="block text-xs font-mono text-[#4F617A] uppercase tracking-wider mb-2">Capability Area *</label>
+                    <select className={`${input} appearance-none`} defaultValue="" {...register("projectType")}>
+                      <option value="" disabled className="bg-[#111D34]">Select a capability</option>
+                      {CAPABILITIES.map((c) => (
+                        <option key={c} value={c} className="bg-[#111D34] text-white">{c}</option>
+                      ))}
+                    </select>
+                    {errors.projectType && <p className="text-xs text-red-400 mt-1 font-mono">{errors.projectType.message}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-xs font-mono text-slate-400 uppercase tracking-wider mb-2">
-                      PROJECT SCOPE & OBJECTIVE *
-                    </label>
-                    <textarea rows={4} placeholder="Describe your technical requirements..." className={`${inputStyle} resize-none`} {...register("message")} />
+                    <label className="block text-xs font-mono text-[#4F617A] uppercase tracking-wider mb-2">Project Overview *</label>
+                    <textarea
+                      rows={4}
+                      placeholder="Describe your requirements..."
+                      className={`${input} resize-none`}
+                      {...register("message")}
+                    />
                     {errors.message && <p className="text-xs text-red-400 mt-1 font-mono">{errors.message.message}</p>}
                   </div>
 
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-4 rounded-2xl bg-white text-black font-semibold text-sm flex items-center justify-center gap-2 hover:bg-slate-200 transition-all shadow-2xl disabled:opacity-50"
+                    className="btn-primary w-full justify-center disabled:opacity-50"
                   >
-                    {isSubmitting ? (
-                      <span className="font-mono text-xs animate-pulse">TRANSMITTING...</span>
-                    ) : (
-                      <>
-                        <span>Submit Project Brief</span>
-                        <ArrowUpRight className="w-4 h-4" />
-                      </>
-                    )}
+                    {isSubmitting ? "Sending..." : <>Submit Inquiry <ArrowRight className="w-4 h-4" /></>}
                   </button>
                 </form>
               )}
             </div>
-          </div>
+          </motion.div>
 
         </div>
 

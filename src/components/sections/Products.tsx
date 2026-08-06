@@ -1,82 +1,78 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Lock, ShieldAlert } from "lucide-react";
+import { Lock } from "lucide-react";
 
 export default function Products() {
   return (
-    <section id="products" className="relative py-36 bg-[#030611] overflow-hidden border-t border-white/[0.06]">
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 relative z-10 text-center">
-        
-        {/* Section Index Marker */}
-        <motion.div
-          className="flex items-center justify-center gap-4 mb-16 text-xs font-mono text-violet-400 tracking-widest uppercase"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-        >
-          <span>05</span>
-          <span className="w-8 h-px bg-violet-500/40" />
-          <span>RESEARCH & PRODUCTS</span>
-        </motion.div>
+    <section id="products" className="section bg-[#0C1422] relative overflow-hidden">
+      {/* Decorative glow */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="w-[600px] h-[600px] bg-[#E8611A]/5 rounded-full blur-[140px]" />
+      </div>
 
-        {/* Monolithic Lock Visual */}
+      <div className="container relative z-10 text-center">
+
+        {/* Lock icon */}
         <motion.div
-          className="relative w-28 h-28 mx-auto mb-10 flex items-center justify-center"
+          className="w-16 h-16 mx-auto mb-8 rounded-2xl bg-[#1B2A4A] border border-[#E8611A]/20 flex items-center justify-center shadow-[0_0_30px_rgba(232,97,26,0.15)]"
           initial={{ scale: 0.8, opacity: 0 }}
           whileInView={{ scale: 1, opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.6 }}
         >
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-violet-500/20 to-blue-500/10 blur-xl animate-pulse-glow" />
-          <div className="relative w-full h-full rounded-3xl bg-white/[0.03] border border-white/15 backdrop-blur-xl flex items-center justify-center shadow-2xl">
-            <Lock className="w-10 h-10 text-white" />
-          </div>
+          <Lock className="w-7 h-7 text-[#E8611A]" />
         </motion.div>
 
-        {/* Heading */}
-        <motion.h2
-          className="font-display text-4xl sm:text-6xl font-bold tracking-tight text-white mb-6 max-w-3xl mx-auto leading-[1.05]"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.1 }}
-        >
-          Something extraordinary <br /> is in development.
-        </motion.h2>
-
-        {/* Minimal mystery text */}
-        <motion.p
-          className="text-slate-400 text-lg font-light max-w-xl mx-auto mb-12 leading-relaxed"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        >
-          We are engineering the next generation of autonomous AI products designed to fundamentally shift how businesses build and operate.
-        </motion.p>
-
-        {/* Progress Line */}
         <motion.div
-          className="max-w-md mx-auto"
+          className="label justify-center mb-6"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.8, delay: 0.3 }}
         >
-          <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden mb-4">
+          Research & Products
+        </motion.div>
+
+        <motion.h2
+          className="font-display text-[clamp(2rem,4vw,3.5rem)] font-bold text-white mb-5 max-w-2xl mx-auto leading-[1.1]"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
+          Something extraordinary is in development.
+        </motion.h2>
+
+        <motion.p
+          className="text-[#8896B0] text-lg font-light max-w-lg mx-auto mb-10 leading-relaxed"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
+          We are engineering the next generation of AI products designed to fundamentally transform how enterprises build and operate.
+        </motion.p>
+
+        {/* Progress bar */}
+        <motion.div
+          className="max-w-xs mx-auto"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.3 }}
+        >
+          <div className="h-0.5 w-full bg-[#1B2A4A] rounded-full overflow-hidden mb-3">
             <motion.div
-              className="h-full bg-gradient-to-r from-blue-500 via-cyan-400 to-violet-500 rounded-full"
+              className="h-full bg-gradient-to-r from-[#E8611A] to-[#F07840] rounded-full"
               initial={{ width: "0%" }}
-              whileInView={{ width: "65%" }}
+              whileInView={{ width: "70%" }}
               viewport={{ once: true }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
+              transition={{ duration: 1.4, ease: "easeOut" }}
             />
           </div>
-          <div className="flex items-center justify-between text-xs font-mono text-slate-500">
-            <span>CONFIDENTIAL REVEAL</span>
-            <span className="text-slate-400">STAGE II / STEALTH</span>
-          </div>
+          <span className="text-[10px] font-mono text-[#4F617A] uppercase tracking-widest">
+            Stealth Development · Stage II
+          </span>
         </motion.div>
 
       </div>

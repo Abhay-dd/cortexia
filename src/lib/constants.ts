@@ -1,23 +1,22 @@
 import {
   Brain,
   Workflow,
-  Globe,
   Code,
   Cloud,
+  ShieldCheck,
   Zap,
-  Shield,
-  Star,
-  Users,
   TrendingUp,
+  Lock,
   type LucideIcon,
 } from "lucide-react";
 
-// ─── Navigation ───────────────────────────────────────────────
+// ─── Navigation Links ─────────────────────────────────────────
 export const NAV_LINKS = [
   { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
+  { label: "Why Cortexia", href: "#why-cortexia" },
   { label: "Services", href: "#services" },
-  { label: "Our Work", href: "#work" },
+  { label: "Featured Work", href: "#work" },
+  { label: "Technology", href: "#technology" },
   { label: "Products", href: "#products" },
   { label: "Contact", href: "#contact" },
 ] as const;
@@ -27,136 +26,122 @@ export const COMPANY = {
   name: "Cortexia AI",
   tagline: "Engineering Intelligence. Empowering Businesses.",
   description:
-    "Cortexia AI is an Artificial Intelligence company focused on developing intelligent software, AI-powered automation, custom web applications, cloud solutions, and innovative digital products.",
+    "Cortexia AI develops intelligent software, autonomous agentic systems, custom web applications, cloud solutions, and enterprise digital platforms.",
   mission:
-    "To democratize artificial intelligence by building powerful, accessible, and scalable AI solutions that drive real business outcomes.",
-  vision:
-    "To become a global leader in applied AI engineering, creating a future where every business can harness the full potential of artificial intelligence.",
+    "To build reliable, secure, and scalable artificial intelligence that transforms enterprise capabilities and operations.",
   email: "hello@cortexia.ai",
-  phone: "+1 (555) 000-0000",
   address: "San Francisco, CA",
 } as const;
 
-// ─── Trust Indicators ─────────────────────────────────────────
-export const TRUST_INDICATORS = [
-  { icon: Brain, label: "AI Development" },
-  { icon: Zap, label: "Automation" },
-  { icon: Cloud, label: "Cloud" },
-  { icon: Globe, label: "Web Applications" },
-] as const;
-
-// ─── Statistics ───────────────────────────────────────────────
-export const STATS = [
-  { value: 50, suffix: "+", label: "Projects Delivered" },
+// ─── Trust Metrics ────────────────────────────────────────────
+export const METRICS = [
+  { value: 50, suffix: "+", label: "Enterprise Projects" },
   { value: 30, suffix: "+", label: "AI Models Deployed" },
-  { value: 99.9, suffix: "%", label: "Uptime Guarantee" },
-  { value: 24, suffix: "/7", label: "Support Available" },
+  { value: 99.9, suffix: "%", label: "Uptime SLA" },
+  { value: 24, suffix: "/7", label: "Support & Monitoring" },
 ] as const;
 
-// ─── Values ───────────────────────────────────────────────────
-export const VALUES = [
+// ─── Why Cortexia AI Pillars ──────────────────────────────────
+export const WHY_CORTEXIA_PILLARS = [
+  {
+    icon: ShieldCheck,
+    title: "Enterprise Rigor & Security",
+    description:
+      "SOC2-compliant architectures, encrypted model pipelines, and deterministic fallbacks designed for zero-risk adoption.",
+  },
+  {
+    icon: Brain,
+    title: "Custom AI Architecture",
+    description:
+      "Domain-specific model tuning, autonomous multi-agent orchestration, and proprietary computer vision algorithms.",
+  },
   {
     icon: Zap,
-    title: "Innovation",
-    description: "Pushing boundaries with cutting-edge AI technologies and novel engineering approaches.",
-  },
-  {
-    icon: Shield,
-    title: "Integrity",
-    description: "Building trust through transparent practices, ethical AI, and honest communication.",
-  },
-  {
-    icon: Star,
-    title: "Quality",
-    description: "Delivering enterprise-grade solutions with meticulous attention to detail and performance.",
+    title: "High-Throughput Performance",
+    description:
+      "Sub-50ms latency response times, auto-scaling cloud compute, and optimized vector search indexing.",
   },
   {
     icon: TrendingUp,
-    title: "Scalability",
-    description: "Engineering solutions that grow with your business, from startup to enterprise scale.",
-  },
-  {
-    icon: Users,
-    title: "Customer Success",
-    description: "Your success is our mission. We partner closely to ensure measurable business impact.",
-  },
-] as const;
-
-// ─── Timeline ─────────────────────────────────────────────────
-export const TIMELINE = [
-  {
-    year: "2023",
-    title: "Foundation",
-    description: "Cortexia AI was founded with a vision to make AI accessible to every business.",
-  },
-  {
-    year: "2023",
-    title: "First AI Products",
-    description: "Launched our first suite of AI-powered automation tools and intelligent chatbots.",
-  },
-  {
-    year: "2024",
-    title: "Enterprise Expansion",
-    description: "Scaled operations to serve enterprise clients with custom AI solutions and cloud infrastructure.",
-  },
-  {
-    year: "2025",
-    title: "Innovation Lab",
-    description: "Established our AI research lab, pushing the boundaries of computer vision and NLP.",
+    title: "Proven Business Outcomes",
+    description:
+      "Measurable efficiency gains, automated manual processes, and direct bottom-line operational savings.",
   },
 ] as const;
 
 // ─── Services ─────────────────────────────────────────────────
 export interface Service {
+  id: string;
   icon: LucideIcon;
   title: string;
+  subtitle: string;
   description: string;
   features: string[];
-  gradient: string;
 }
 
 export const SERVICES: Service[] = [
   {
+    id: "ai",
     icon: Brain,
     title: "Artificial Intelligence",
+    subtitle: "Custom ML Models & Autonomous Agents",
     description:
-      "Build intelligent systems that understand, learn, and adapt. From conversational AI to computer vision, we engineer AI solutions that transform your operations.",
-    features: ["AI Chatbots", "AI Agents", "Computer Vision", "Machine Learning", "NLP Solutions"],
-    gradient: "from-blue-500 to-cyan-500",
-  },
-  {
-    icon: Workflow,
-    title: "Automation",
-    description:
-      "Eliminate manual processes and accelerate your workflows. Our automation solutions integrate seamlessly with your existing systems for maximum efficiency.",
+      "We design and deploy custom intelligent systems tailored to complex enterprise workflows. From agentic reasoning to computer vision, we engineer precision AI.",
     features: [
-      "Business Automation",
-      "Workflow Automation",
-      "CRM Automation",
-      "WhatsApp Automation",
-      "Email Automation",
+      "Autonomous AI Agents",
+      "Enterprise Chatbots",
+      "Computer Vision & Perception",
+      "Machine Learning Engineering",
+      "Natural Language Processing",
     ],
-    gradient: "from-purple-500 to-pink-500",
   },
   {
-    icon: Code,
-    title: "Software Development",
+    id: "automation",
+    icon: Workflow,
+    title: "Intelligent Automation",
+    subtitle: "End-to-End Workflow Optimization",
     description:
-      "From concept to deployment, we build robust, scalable software tailored to your business needs. Modern architecture, clean code, exceptional performance.",
-    features: ["SaaS Platforms", "Enterprise Applications", "Admin Dashboards", "API Development"],
-    gradient: "from-amber-500 to-orange-500",
+      "Eliminate repetitive manual overhead with intelligent process automation that orchestrates data across your entire software ecosystem.",
+    features: [
+      "Business Process Automation",
+      "Complex Workflow Orchestration",
+      "CRM & ERP Automation",
+      "WhatsApp & Multi-Channel Bots",
+      "Email & Document Automation",
+    ],
   },
   {
+    id: "software",
+    icon: Code,
+    title: "Software Engineering",
+    subtitle: "Modern Web & Enterprise Platforms",
+    description:
+      "Robust, high-throughput custom software built with modern frontends, scalable backends, clean architecture, and intuitive user experiences.",
+    features: [
+      "SaaS Platforms",
+      "Enterprise Applications",
+      "Executive Dashboards",
+      "High-Performance APIs",
+    ],
+  },
+  {
+    id: "cloud",
     icon: Cloud,
     title: "Cloud & DevOps",
+    subtitle: "Resilient Cloud Infrastructure",
     description:
-      "Deploy with confidence on modern cloud infrastructure. We architect, build, and manage cloud environments that are secure, scalable, and cost-effective.",
-    features: ["AWS", "Docker", "CI/CD", "Cloud Infrastructure", "Deployment"],
-    gradient: "from-emerald-500 to-teal-500",
+      "Deploy and manage high-availability infrastructure. We architect secure, auto-scaling environments optimized for AI workloads.",
+    features: [
+      "AWS Architecture",
+      "Docker & Kubernetes",
+      "Automated CI/CD Pipelines",
+      "Cloud Security & Compliance",
+      "Infrastructure Monitoring",
+    ],
   },
 ];
 
-// ─── Projects ─────────────────────────────────────────────────
+// ─── Featured Projects / Case Studies ─────────────────────────
 export interface Project {
   id: string;
   title: string;
@@ -167,8 +152,7 @@ export interface Project {
   technologies: string[];
   features: string[];
   results: string[];
-  status: "Live" | "In Development" | "Completed";
-  image: string;
+  status: string;
 }
 
 export const PROJECTS: Project[] = [
@@ -177,136 +161,84 @@ export const PROJECTS: Project[] = [
     title: "AI Virtual Try-On",
     category: "Artificial Intelligence",
     description:
-      "A cutting-edge virtual try-on platform powered by computer vision and generative AI, enabling customers to visualize products on themselves in real-time.",
+      "Computer vision and generative AI platform enabling real-time product preview for e-commerce customers.",
     problem:
-      "E-commerce fashion retailers faced high return rates due to customers being unable to visualize how clothing would look on them before purchasing.",
+      "Retailers suffered high product return rates due to customer uncertainty around garment fit and visualization.",
     solution:
-      "We developed a real-time AI-powered virtual try-on system using advanced pose estimation, body segmentation, and generative adversarial networks to create photorealistic previews.",
-    technologies: ["Python", "TensorFlow", "React", "WebGL", "AWS", "Computer Vision"],
-    features: [
-      "Real-time body tracking",
-      "Photorealistic rendering",
-      "Multi-angle support",
-      "Mobile-optimized",
-      "95% accuracy rate",
-    ],
-    results: ["40% reduction in returns", "3x increase in conversion", "2M+ virtual try-ons processed"],
-    status: "Live",
-    image: "/images/project-ai-tryon.jpg",
+      "Engineered real-time body tracking, pose estimation, and neural rendering to generate photorealistic previews in <100ms.",
+    technologies: ["Python", "TensorFlow", "React", "WebGL", "AWS"],
+    features: ["Real-Time Body Tracking", "Multi-Angle Pose Support", "Mobile WebGL Pipeline"],
+    results: ["40% Reduction in Returns", "3.2x Conversion Increase"],
+    status: "Production",
   },
   {
     id: "ai-automation-platform",
-    title: "AI Automation Platform",
+    title: "AI Automation Engine",
     category: "Automation",
     description:
-      "An enterprise-grade automation platform that orchestrates complex business workflows using AI decision-making and intelligent process automation.",
+      "Enterprise workflow automation platform connecting legacy software with intelligent decision routing.",
     problem:
-      "A logistics company was spending 200+ hours per week on manual data entry, routing decisions, and customer communication across fragmented systems.",
+      "Logistics enterprise wasted 200+ hours weekly on manual data translation across fragmented systems.",
     solution:
-      "We built a centralized AI automation platform that connects all business systems, makes intelligent routing decisions, and automates customer communications through multiple channels.",
-    technologies: ["Node.js", "Python", "React", "PostgreSQL", "Redis", "Docker"],
-    features: [
-      "Smart workflow builder",
-      "AI decision engine",
-      "Multi-channel messaging",
-      "Real-time analytics",
-      "Custom integrations",
-    ],
-    results: ["85% reduction in manual work", "60% faster processing", "$500K annual savings"],
-    status: "Live",
-    image: "/images/project-automation.jpg",
+      "Built a centralized AI automation hub with smart routing algorithms and multi-channel notification bots.",
+    technologies: ["Node.js", "Python", "PostgreSQL", "Redis", "Docker"],
+    features: ["Visual Flow Builder", "AI Routing Engine", "Real-Time Telemetry"],
+    results: ["85% Manual Task Reduction", "$500K Annual Overhead Savings"],
+    status: "Production",
   },
   {
     id: "enterprise-dashboard",
-    title: "Enterprise Dashboard",
+    title: "Predictive Enterprise Analytics",
     category: "Software Development",
     description:
-      "A comprehensive enterprise analytics dashboard with real-time data visualization, AI-powered insights, and customizable reporting for executive decision-making.",
+      "Executive decision platform combining live streaming analytics with automated predictive insights.",
     problem:
-      "Enterprise stakeholders needed a unified view of business metrics across multiple departments, with the ability to drill down into specific data points and receive AI-generated insights.",
+      "Leadership required unified metrics across global operational teams without manual reporting delays.",
     solution:
-      "We designed and built a modular dashboard platform with real-time data streaming, interactive visualizations, and an AI insights engine that surfaces anomalies and opportunities.",
-    technologies: ["Next.js", "TypeScript", "D3.js", "GraphQL", "PostgreSQL", "AWS"],
-    features: [
-      "Real-time data streaming",
-      "AI-powered insights",
-      "Custom report builder",
-      "Role-based access",
-      "White-label ready",
-    ],
-    results: ["70% faster decision-making", "50+ integrated data sources", "10K+ daily active users"],
-    status: "Completed",
-    image: "/images/project-dashboard.jpg",
+      "Designed a real-time data visualization platform with AI anomaly detection and automated report generation.",
+    technologies: ["Next.js", "TypeScript", "D3.js", "GraphQL", "AWS"],
+    features: ["Streaming Visualizations", "AI Anomaly Detection", "Custom Executive Export"],
+    results: ["70% Faster Decision Velocity", "10,000+ Daily Active Users"],
+    status: "Production",
   },
   {
     id: "real-estate-platform",
-    title: "Real Estate Platform",
+    title: "Intelligent Real Estate Platform",
     category: "Software Development",
     description:
-      "A modern real estate platform with AI-powered property valuation, virtual tours, smart search, and automated lead management for property developers and agents.",
+      "Property platform with automated AI valuation models, 3D interactive tours, and lead routing.",
     problem:
-      "Real estate agencies struggled with outdated listing management, inaccurate valuations, and disconnected lead tracking across multiple properties and developments.",
+      "Property developers faced fragmented listing systems and slow lead qualification turnaround times.",
     solution:
-      "We created an all-in-one real estate platform with AI valuation models, 3D virtual tours, intelligent search with natural language queries, and a complete CRM for lead management.",
-    technologies: ["React", "Node.js", "Python", "MongoDB", "Three.js", "TensorFlow"],
-    features: [
-      "AI property valuation",
-      "3D virtual tours",
-      "Smart search & filters",
-      "Automated lead management",
-      "Market analytics",
-    ],
-    results: ["30% more accurate valuations", "5x more property views", "200+ properties listed"],
-    status: "Live",
-    image: "/images/project-realestate.jpg",
-  },
-  {
-    id: "custom-ai-assistant",
-    title: "Custom AI Assistant",
-    category: "Artificial Intelligence",
-    description:
-      "An intelligent AI assistant built for a financial services firm, capable of document analysis, regulatory compliance checking, and client communication automation.",
-    problem:
-      "Financial advisors were spending excessive time on regulatory document review, compliance checking, and routine client communications, limiting their capacity for advisory work.",
-    solution:
-      "We developed a domain-specific AI assistant trained on financial regulations and firm-specific policies, with capabilities for document analysis, compliance verification, and intelligent client communication drafting.",
-    technologies: ["Python", "LangChain", "OpenAI", "React", "FastAPI", "Vector DB"],
-    features: [
-      "Document analysis",
-      "Compliance checking",
-      "Smart email drafting",
-      "Knowledge base search",
-      "Audit trail",
-    ],
-    results: ["75% time saved on compliance", "99.2% accuracy rate", "500+ documents processed daily"],
-    status: "Live",
-    image: "/images/project-ai-assistant.jpg",
+      "Developed an all-in-one platform integrating automated property valuation algorithms and virtual tours.",
+    technologies: ["React", "Node.js", "MongoDB", "Three.js", "TensorFlow"],
+    features: ["AI Valuation Model", "3D Interactive Tours", "Automated Lead Pipeline"],
+    results: ["30% Higher Valuation Accuracy", "5x View Duration"],
+    status: "Production",
   },
 ];
 
-export const PROJECT_CATEGORIES = ["All", ...new Set(PROJECTS.map((p) => p.category))];
+export const PROJECT_CATEGORIES = ["All", "Artificial Intelligence", "Automation", "Software Development"];
 
-// ─── Social Links ─────────────────────────────────────────────
-export const SOCIAL_LINKS = [
-  { label: "LinkedIn", href: "https://linkedin.com/company/cortexia-ai", icon: "linkedin" },
-  { label: "GitHub", href: "https://github.com/cortexia-ai", icon: "github" },
-  { label: "Instagram", href: "https://instagram.com/cortexia.ai", icon: "instagram" },
-  { label: "Email", href: "mailto:hello@cortexia.ai", icon: "mail" },
+// ─── Tech Stack Items ─────────────────────────────────────────
+export const TECH_STACK = [
+  { name: "OpenAI", role: "LLMs & Foundation Models" },
+  { name: "AWS", role: "Scalable Cloud Compute" },
+  { name: "Docker", role: "Containerization & K8s" },
+  { name: "Python", role: "AI Research & Deep Learning" },
+  { name: "Next.js", role: "Enterprise Web Architecture" },
+  { name: "MongoDB", role: "High-Performance Data Storage" },
 ] as const;
 
 // ─── Footer Links ─────────────────────────────────────────────
 export const FOOTER_LINKS = {
   quickLinks: [
     { label: "Home", href: "#home" },
-    { label: "About", href: "#about" },
+    { label: "Why Cortexia", href: "#why-cortexia" },
     { label: "Services", href: "#services" },
-    { label: "Our Work", href: "#work" },
+    { label: "Featured Work", href: "#work" },
+    { label: "Technology", href: "#technology" },
+    { label: "Products", href: "#products" },
     { label: "Contact", href: "#contact" },
-  ],
-  services: [
-    { label: "Artificial Intelligence", href: "#services" },
-    { label: "Automation", href: "#services" },
-    { label: "Software Development", href: "#services" },
-    { label: "Cloud & DevOps", href: "#services" },
   ],
 } as const;

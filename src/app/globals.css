@@ -1,166 +1,197 @@
 @import "tailwindcss";
 
-/* ─── Tailwind v4 Theme & Custom Utilities ──────────────────── */
+/* ─────────────────────────────────────────────────────────────
+   CORTEXIA AI — Premium Design System
+   Brand colors extracted from logo:
+   Navy: #1B2A4A | Orange: #E8611A
+   ───────────────────────────────────────────────────────────── */
+
 @theme inline {
-  /* Ultra-Luxury Color System */
-  --color-background: #030611;
-  --color-background-elevated: #080d1a;
-  --color-foreground: #f8fafc;
-  --color-primary: #3b82f6;
-  --color-primary-glow: #60a5fa;
-  --color-accent: #06b6d4;
-  --color-accent-violet: #8b5cf6;
-  --color-card: #0b1120;
-  --color-card-hover: #111a2e;
-  --color-muted: #64748b;
-  --color-muted-light: #94a3b8;
-  --color-border: rgba(255, 255, 255, 0.07);
-  --color-border-hover: rgba(255, 255, 255, 0.18);
-  --color-glass: rgba(11, 17, 32, 0.65);
-  --color-glass-border: rgba(255, 255, 255, 0.08);
+  /* Brand Colors */
+  --color-navy:        #1B2A4A;
+  --color-navy-deep:   #111D34;
+  --color-navy-light:  #243356;
+  --color-orange:      #E8611A;
+  --color-orange-light:#F07840;
+  --color-orange-dim:  rgba(232, 97, 26, 0.12);
+
+  /* Backgrounds */
+  --color-bg:          #0C1422;
+  --color-bg-elevated: #111D34;
+  --color-surface:     #1B2A4A;
+  --color-surface-hover: #243356;
+
+  /* Text */
+  --color-text:        #F0F4FF;
+  --color-text-muted:  #8896B0;
+  --color-text-dim:    #4F617A;
+
+  /* Borders */
+  --color-border:      rgba(255, 255, 255, 0.08);
+  --color-border-hover:rgba(232, 97, 26, 0.4);
 
   /* Fonts */
   --font-heading: var(--font-space-grotesk);
-  --font-body: var(--font-inter);
+  --font-body:    var(--font-inter);
 }
 
-/* ─── Custom Styles & Reset ────────────────────────────────── */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
+/* ─── Reset & Base ──────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 100px;
-  background-color: #030611;
+  scroll-padding-top: 80px;
+  background: #0C1422;
   color-scheme: dark;
 }
 
 body {
-  background: #030611;
-  color: #f8fafc;
-  font-family: var(--font-body), system-ui, -apple-system, sans-serif;
+  background: #0C1422;
+  color: #F0F4FF;
+  font-family: var(--font-body), system-ui, sans-serif;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
 }
 
-/* ─── Custom Selection ─────────────────────────────────────── */
 ::selection {
-  background: rgba(59, 130, 246, 0.35);
-  color: #ffffff;
+  background: rgba(232, 97, 26, 0.3);
+  color: #fff;
 }
 
-/* ─── Custom Scrollbar ─────────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 5px;
-}
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: #0C1422; }
+::-webkit-scrollbar-thumb { background: rgba(232, 97, 26, 0.3); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(232, 97, 26, 0.6); }
 
-::-webkit-scrollbar-track {
-  background: #030611;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(59, 130, 246, 0.4);
-}
-
-/* ─── Luxury Editorial Typography Utilities ─────────────────── */
+/* ─── Typography Utilities ──────────────────────────────────── */
 .font-display {
   font-family: var(--font-space-grotesk), sans-serif;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
 }
 
-.text-balance {
-  text-wrap: balance;
-}
-
-/* ─── Gradient Text Utilities ──────────────────────────────── */
-.gradient-heading {
-  background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 50%, #64748b 100%);
+/* ─── Brand Gradient Text ───────────────────────────────────── */
+.text-gradient {
+  background: linear-gradient(135deg, #ffffff 0%, #E8611A 60%, #F07840 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.gradient-accent {
-  background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 50%, #06b6d4 100%);
+.text-gradient-orange {
+  background: linear-gradient(135deg, #E8611A 0%, #F07840 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.gradient-violet-blue {
-  background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 50%, #38bdf8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+/* ─── Surface Cards ─────────────────────────────────────────── */
+.card {
+  background: rgba(27, 42, 74, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ─── Glassmorphism Cards & Panels ─────────────────────────── */
-.glass-panel {
-  background: rgba(11, 17, 32, 0.5);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+.card:hover {
+  background: rgba(36, 51, 86, 0.7);
+  border-color: rgba(232, 97, 26, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(232, 97, 26, 0.08);
 }
 
-.glass-panel-hover {
-  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+/* ─── Buttons ───────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 8px;
+  background: #E8611A;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  text-decoration: none;
+  cursor: pointer;
+  border: none;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 20px rgba(232, 97, 26, 0.35);
 }
 
-.glass-panel-hover:hover {
-  background: rgba(15, 23, 42, 0.7);
-  border-color: rgba(96, 165, 250, 0.25);
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7), 0 0 30px rgba(59, 130, 246, 0.12);
+.btn-primary:hover {
+  background: #F07840;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 28px rgba(232, 97, 26, 0.5);
 }
 
-/* ─── Ambient Glow & Grid Effects ───────────────────────────── */
-.bg-mesh-grid {
-  background-image: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 80px 80px;
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border-radius: 8px;
+  background: transparent;
+  color: #F0F4FF;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: var(--font-body);
+  text-decoration: none;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.25s ease;
 }
 
-.glow-ambient {
-  box-shadow: 0 0 100px 30px rgba(59, 130, 246, 0.08);
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(232, 97, 26, 0.5);
+  color: #E8611A;
 }
 
-/* ─── Film Grain Noise Texture ──────────────────────────────── */
-.film-grain {
-  position: fixed;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  opacity: 0.035;
-  pointer-events: none;
-  z-index: 999;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+/* ─── Section Container ─────────────────────────────────────── */
+.section {
+  padding: 100px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-/* ─── Keyframe Animations ───────────────────────────────────── */
-@keyframes orbRotate {
-  0% { transform: rotate(0deg) scale(1); }
-  50% { transform: rotate(180deg) scale(1.05); }
-  100% { transform: rotate(360deg) scale(1); }
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
 }
 
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.08); }
+/* ─── Label Overline ────────────────────────────────────────── */
+.label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #E8611A;
+  font-family: monospace;
 }
 
-.animate-orb-rotate {
-  animation: orbRotate 25s linear infinite;
+.label::before {
+  content: '';
+  display: block;
+  width: 20px;
+  height: 1px;
+  background: #E8611A;
 }
 
-.animate-pulse-glow {
-  animation: pulseGlow 6s ease-in-out infinite;
+/* ─── Mesh Background ───────────────────────────────────────── */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 64px 64px;
+}
+
+/* ─── Glow ──────────────────────────────────────────────────── */
+.glow-orange {
+  box-shadow: 0 0 60px rgba(232, 97, 26, 0.2), 0 0 120px rgba(232, 97, 26, 0.05);
 }

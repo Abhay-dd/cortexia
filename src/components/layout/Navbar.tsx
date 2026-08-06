@@ -3,136 +3,151 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, ArrowUpRight } from "lucide-react";
-import { NAV_LINKS } from "@/lib/constants";
 import { cn } from "@/lib/utils";
+
+const NAV_LINKS = [
+  { label: "Why Us", href: "#why-cortexia" },
+  { label: "Services", href: "#services" },
+  { label: "Work", href: "#work" },
+  { label: "Technology", href: "#technology" },
+  { label: "Products", href: "#products" },
+];
+
+// Cortexia AI SVG Logo (extracted from the uploaded image brand mark)
+function LogoMark({ size = 32 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      {/* Dark C shape */}
+      <path
+        d="M72 22C65 14 55 9 44 9C23 9 6 26 6 47C6 68 23 85 44 85C55 85 65 80 72 72"
+        stroke="#1B2A4A"
+        strokeWidth="14"
+        strokeLinecap="round"
+        fill="none"
+      />
+      {/* Orange top swoosh */}
+      <path
+        d="M55 10C62 11 70 16 76 22"
+        stroke="#E8611A"
+        strokeWidth="8"
+        strokeLinecap="round"
+        fill="none"
+      />
+      {/* Orange bottom swoosh */}
+      <path
+        d="M55 84C62 83 70 78 76 72"
+        stroke="#E8611A"
+        strokeWidth="8"
+        strokeLinecap="round"
+        fill="none"
+      />
+    </svg>
+  );
+}
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 40);
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
+    const onScroll = () => setIsScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = isMobileOpen ? "hidden" : "";
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
-  }, [isMobileOpen]);
+  }, [mobileOpen]);
 
-  const handleNavClick = (href: string) => {
-    setIsMobileOpen(false);
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+  const scroll = (href: string) => {
+    setMobileOpen(false);
+    document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 pt-4 px-4 sm:px-8 pointer-events-none">
-        <motion.div
-          className={cn(
-            "max-w-6xl mx-auto rounded-full pointer-events-auto transition-all duration-500 flex items-center justify-between px-6 py-3.5",
-            isScrolled
-              ? "bg-[#0b1120]/80 backdrop-blur-xl border border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
-              : "bg-transparent border border-transparent"
-          )}
-          initial={{ y: -60, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >
-          {/* Logo Mark */}
-          <button
-            onClick={() => handleNavClick("#home")}
-            className="flex items-center gap-3 group text-left"
-          >
-            <div className="relative w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 via-primary to-cyan-500 p-[1px] shadow-[0_0_15px_rgba(59,130,246,0.3)]">
-              <div className="w-full h-full rounded-[7px] bg-[#030611] flex items-center justify-center">
-                <span className="font-display font-bold text-white text-sm tracking-tighter">C</span>
-              </div>
-            </div>
-            <div className="flex flex-col">
-              <span className="font-display font-bold text-base tracking-tight text-white group-hover:text-blue-400 transition-colors">
-                CORTEXIA<span className="text-blue-500 font-mono text-xs ml-1">AI</span>
-              </span>
-            </div>
+      <header
+        className={cn(
+          "fixed top-0 inset-x-0 z-50 transition-all duration-500",
+          isScrolled
+            ? "bg-[#0C1422]/90 backdrop-blur-xl border-b border-white/[0.08] shadow-[0_4px_30px_rgba(0,0,0,0.4)]"
+            : "bg-transparent"
+        )}
+      >
+        <div className="container flex items-center justify-between h-[72px]">
+          {/* Logo */}
+          <button onClick={() => scroll("#home")} className="flex items-center gap-3">
+            <LogoMark size={36} />
+            <span className="font-display font-bold text-lg text-white tracking-tight">
+              Cortexia <span className="text-[#E8611A]">AI</span>
+            </span>
           </button>
 
-          {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-1.5 bg-white/[0.03] border border-white/[0.06] rounded-full px-4 py-1.5 backdrop-blur-md">
-            {NAV_LINKS.map((link) => (
+          {/* Desktop Nav */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {NAV_LINKS.map((l) => (
               <button
-                key={link.href}
-                onClick={() => handleNavClick(link.href)}
-                className="px-4 py-1.5 rounded-full text-xs font-medium text-slate-300 hover:text-white hover:bg-white/[0.08] transition-all duration-300"
+                key={l.href}
+                onClick={() => scroll(l.href)}
+                className="px-4 py-2 rounded-lg text-sm text-[#8896B0] hover:text-white hover:bg-white/[0.05] transition-all duration-200"
               >
-                {link.label}
+                {l.label}
               </button>
             ))}
           </nav>
 
-          {/* CTA & Mobile Menu Toggle */}
+          {/* CTA */}
           <div className="flex items-center gap-3">
-            <a
-              href="#contact"
-              onClick={(e) => {
-                e.preventDefault();
-                handleNavClick("#contact");
-              }}
-              className="hidden sm:inline-flex items-center gap-1.5 px-5 py-2 rounded-full text-xs font-semibold bg-white text-black hover:bg-slate-200 transition-all duration-300 shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:scale-[1.02] group"
-            >
-              <span>Get in Touch</span>
-              <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </a>
-
             <button
-              onClick={() => setIsMobileOpen(!isMobileOpen)}
-              className="lg:hidden p-2 text-slate-300 hover:text-white rounded-full bg-white/5 border border-white/10"
-              aria-label="Toggle Navigation"
+              onClick={() => scroll("#contact")}
+              className="hidden sm:flex btn-primary text-sm py-2.5 px-5"
             >
-              {isMobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              Get in Touch
+              <ArrowUpRight className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="lg:hidden p-2 rounded-lg text-[#8896B0] hover:text-white hover:bg-white/[0.05] transition-all"
+              aria-label="Menu"
+            >
+              {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
-        </motion.div>
+        </div>
       </header>
 
-      {/* Mobile Drawer Overlay */}
+      {/* Mobile Menu */}
       <AnimatePresence>
-        {isMobileOpen && (
+        {mobileOpen && (
           <motion.div
-            className="fixed inset-0 z-40 lg:hidden flex flex-col justify-center px-6"
+            className="fixed inset-0 z-40 lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div
-              className="absolute inset-0 bg-[#030611]/90 backdrop-blur-2xl"
-              onClick={() => setIsMobileOpen(false)}
-            />
+            <div className="absolute inset-0 bg-[#0C1422]/95 backdrop-blur-2xl" onClick={() => setMobileOpen(false)} />
             <motion.div
-              className="relative z-10 glass-panel rounded-3xl p-8 max-w-sm mx-auto w-full border border-white/10"
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.9, y: 20 }}
+              className="relative z-10 card m-4 mt-20 rounded-2xl p-6"
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: -20, opacity: 0 }}
             >
-              <div className="flex flex-col gap-3">
-                {NAV_LINKS.map((link) => (
-                  <button
-                    key={link.href}
-                    onClick={() => handleNavClick(link.href)}
-                    className="text-left px-4 py-3 rounded-2xl text-lg font-display text-slate-300 hover:text-white hover:bg-white/5 transition-all"
-                  >
-                    {link.label}
-                  </button>
-                ))}
+              {NAV_LINKS.map((l) => (
                 <button
-                  onClick={() => handleNavClick("#contact")}
-                  className="mt-6 w-full py-3.5 rounded-2xl bg-white text-black font-semibold text-sm flex items-center justify-center gap-2"
+                  key={l.href}
+                  onClick={() => scroll(l.href)}
+                  className="block w-full text-left px-4 py-3 rounded-xl text-base text-[#8896B0] hover:text-white hover:bg-white/[0.05] transition-all"
                 >
-                  Get in Touch
-                  <ArrowUpRight className="w-4 h-4" />
+                  {l.label}
                 </button>
-              </div>
+              ))}
+              <button
+                onClick={() => scroll("#contact")}
+                className="mt-4 w-full btn-primary justify-center"
+              >
+                Get in Touch
+              </button>
             </motion.div>
           </motion.div>
         )}
