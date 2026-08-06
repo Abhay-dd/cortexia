@@ -6,11 +6,11 @@ import { Menu, X, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV_LINKS = [
-  { label: "Why Us", href: "#why-cortexia" },
   { label: "Services", href: "#services" },
-  { label: "Work", href: "#work" },
-  { label: "Technology", href: "#technology" },
+  { label: "How We Work", href: "#process" },
+  { label: "Our Work", href: "#work" },
   { label: "Products", href: "#products" },
+  { label: "Contact", href: "#contact" },
 ];
 
 // Cortexia AI SVG Logo (extracted from the uploaded image brand mark)
