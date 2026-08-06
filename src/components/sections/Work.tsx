@@ -77,7 +77,7 @@ export default function Work() {
   const filtered = category === "All" ? PROJECTS : PROJECTS.filter((p) => p.category === category);
 
   return (
-    <section id="work" className="section bg-[#0C1422]">
+    <section id="work" className="section bg-[#070E1A]">
       <div className="container">
 
         {/* Header */}
@@ -157,7 +157,7 @@ export default function Work() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute inset-0 bg-[#0C1422]/90 backdrop-blur-2xl" onClick={() => setSelected(null)} />
+            <div className="absolute inset-0 bg-[#070E1A]/90 backdrop-blur-2xl" onClick={() => setSelected(null)} />
             <motion.div
               className="relative z-10 w-full max-w-2xl max-h-[88vh] overflow-y-auto card rounded-3xl p-8 border border-white/[0.1]"
               initial={{ scale: 0.93, y: 16 }}

@@ -1,5 +1,6 @@
 "use client";
 
+
 import { motion } from "framer-motion";
 
 const STACK = [
@@ -13,7 +14,7 @@ const STACK = [
 
 export default function TechStack() {
   return (
-    <section id="technology" className="section bg-[#0C1422]">
+    <section id="technology" className="section bg-[#070E1A]">
       <div className="container">
 
         {/* Header */}

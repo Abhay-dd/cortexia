@@ -46,7 +46,7 @@ export default function Contact() {
     "w-full px-4 py-3.5 rounded-xl bg-[#111D34] border border-white/[0.08] text-white text-sm placeholder:text-[#4F617A] focus:outline-none focus:border-[#E8611A]/50 focus:bg-[#1B2A4A] transition-all duration-200";
 
   return (
-    <section id="contact" className="section bg-[#0C1422]">
+    <section id="contact" className="section bg-[#070E1A]">
       <div className="container">
 
         <div className="grid lg:grid-cols-2 gap-16 items-start">

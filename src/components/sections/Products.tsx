@@ -5,7 +5,7 @@ import { Lock } from "lucide-react";
 
 export default function Products() {
   return (
-    <section id="products" className="section bg-[#0C1422] relative overflow-hidden">
+    <section id="products" className="section bg-[#070E1A] relative overflow-hidden">
       {/* Decorative glow */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <div className="w-[600px] h-[600px] bg-[#E8611A]/5 rounded-full blur-[140px]" />

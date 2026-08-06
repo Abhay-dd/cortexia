@@ -41,12 +41,12 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
-  background: #0C1422;
+  background: #04080F;
   color-scheme: dark;
 }
 
 body {
-  background: #0C1422;
+  background: #04080F;
   color: #F0F4FF;
   font-family: var(--font-body), system-ui, sans-serif;
   overflow-x: hidden;
@@ -88,18 +88,18 @@ body {
 
 /* ─── Surface Cards ─────────────────────────────────────────── */
 .card {
-  background: rgba(27, 42, 74, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(15, 26, 46, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .card:hover {
-  background: rgba(36, 51, 86, 0.7);
+  background: rgba(27, 42, 74, 0.7);
   border-color: rgba(232, 97, 26, 0.3);
   transform: translateY(-2px);
-  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.5), 0 0 20px rgba(232, 97, 26, 0.08);
+  box-shadow: 0 20px 60px -12px rgba(0, 0, 0, 0.7), 0 0 30px rgba(232, 97, 26, 0.08);
 }
 
 /* ─── Buttons ───────────────────────────────────────────────── */
@@ -153,7 +153,7 @@ body {
 /* ─── Section Container ─────────────────────────────────────── */
 .section {
   padding: 100px 0;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .container {

@@ -1,218 +1,244 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { motion, useMotionValue, useSpring, AnimatePresence } from "framer-motion";
+import { useRef, useMemo, useState, useEffect } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Float, MeshDistortMaterial, Sphere, Trail } from "@react-three/drei";
+import * as THREE from "three";
+import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 
-/* ─────────────────────────────────────────────
-   INTERACTIVE PARTICLE NEURAL MESH (canvas)
-   Mouse interaction: attraction/repulsion field
-   Brand colors: #E8611A orange + #1B2A4A navy
-───────────────────────────────────────────── */
-function NeuralCanvas() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const mouseRef = useRef({ x: -9999, y: -9999 });
+/* ── Mouse tracker hook ── */
+function useMouse() {
+  const mouse = useRef({ x: 0, y: 0 });
+  useEffect(() => {
+    const onMove = (e: MouseEvent) => {
+      mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1;
+      mouse.current.y = -(e.clientY / window.innerHeight) * 2 + 1;
+    };
+    window.addEventListener("mousemove", onMove, { passive: true });
+    return () => window.removeEventListener("mousemove", onMove);
+  }, []);
+  return mouse;
+}
+
+/* ── Animated particle nodes on a sphere surface ── */
+function NeuralNodes({ count = 120 }: { count?: number }) {
+  const meshRef = useRef<THREE.InstancedMesh>(null);
+  const mat = useMemo(() => new THREE.MeshBasicMaterial({ color: "#E8611A" }), []);
+  const geo = useMemo(() => new THREE.SphereGeometry(0.025, 6, 6), []);
+
+  const positions = useMemo(() => {
+    const arr: THREE.Vector3[] = [];
+    for (let i = 0; i < count; i++) {
+      const phi = Math.acos(-1 + (2 * i) / count);
+      const theta = Math.sqrt(count * Math.PI) * phi;
+      arr.push(
+        new THREE.Vector3(
+          2.4 * Math.sin(phi) * Math.cos(theta),
+          2.4 * Math.cos(phi),
+          2.4 * Math.sin(phi) * Math.sin(theta)
+        )
+      );
+    }
+    return arr;
+  }, [count]);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!meshRef.current) return;
+    const dummy = new THREE.Object3D();
+    positions.forEach((p, i) => {
+      dummy.position.copy(p);
+      dummy.updateMatrix();
+      meshRef.current!.setMatrixAt(i, dummy.matrix);
+    });
+    meshRef.current.instanceMatrix.needsUpdate = true;
+  }, [positions]);
 
-    const onMouse = (e: MouseEvent) => {
-      const r = canvas.getBoundingClientRect();
-      mouseRef.current = { x: e.clientX - r.left, y: e.clientY - r.top };
-    };
-    const onLeave = () => { mouseRef.current = { x: -9999, y: -9999 }; };
-    canvas.addEventListener("mousemove", onMouse);
-    canvas.addEventListener("mouseleave", onLeave);
+  return <instancedMesh ref={meshRef} args={[geo, mat, count]} />;
+}
 
-    interface Particle {
-      x: number; y: number;
-      ox: number; oy: number;
-      vx: number; vy: number;
-      size: number;
-      isOrange: boolean;
+/* ── Neural connection lines ── */
+function NeuralLines({ count = 60 }: { count?: number }) {
+  const nodeCount = 120;
+  const positions = useMemo(() => {
+    const pts: THREE.Vector3[] = [];
+    for (let i = 0; i < nodeCount; i++) {
+      const phi = Math.acos(-1 + (2 * i) / nodeCount);
+      const theta = Math.sqrt(nodeCount * Math.PI) * phi;
+      pts.push(
+        new THREE.Vector3(
+          2.4 * Math.sin(phi) * Math.cos(theta),
+          2.4 * Math.cos(phi),
+          2.4 * Math.sin(phi) * Math.sin(theta)
+        )
+      );
     }
-
-    let particles: Particle[] = [];
-    let W = 0, H = 0;
-    let raf: number;
-
-    const init = () => {
-      W = canvas.width = canvas.offsetWidth;
-      H = canvas.height = canvas.offsetHeight;
-      particles = [];
-      const count = Math.floor((W * H) / 8500);
-      for (let i = 0; i < count; i++) {
-        const x = Math.random() * W;
-        const y = Math.random() * H;
-        particles.push({
-          x, y, ox: x, oy: y,
-          vx: 0, vy: 0,
-          size: Math.random() * 1.6 + 0.4,
-          isOrange: Math.random() < 0.12,
-        });
-      }
-    };
-
-    const LINK_DIST = 110;
-    const MOUSE_REPEL = 130;
-
-    const draw = () => {
-      ctx.clearRect(0, 0, W, H);
-      const { x: mx, y: my } = mouseRef.current;
-
-      // Update particles
-      for (const p of particles) {
-        const dx = mx - p.x, dy = my - p.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist < MOUSE_REPEL) {
-          const force = (MOUSE_REPEL - dist) / MOUSE_REPEL * 0.8;
-          p.vx -= (dx / dist) * force * 2.5;
-          p.vy -= (dy / dist) * force * 2.5;
-        }
-
-        // Spring back to origin
-        p.vx += (p.ox - p.x) * 0.04;
-        p.vy += (p.oy - p.y) * 0.04;
-        // Damping
-        p.vx *= 0.88;
-        p.vy *= 0.88;
-
-        // Slow drift when idle
-        p.ox += Math.sin(Date.now() * 0.0003 + p.x) * 0.08;
-        p.oy += Math.cos(Date.now() * 0.0002 + p.y) * 0.08;
-
-        p.x += p.vx;
-        p.y += p.vy;
-      }
-
-      // Draw connections
-      for (let i = 0; i < particles.length; i++) {
-        for (let j = i + 1; j < particles.length; j++) {
-          const dx = particles[i].x - particles[j].x;
-          const dy = particles[i].y - particles[j].y;
-          const d = Math.sqrt(dx * dx + dy * dy);
-          if (d < LINK_DIST) {
-            const alpha = (1 - d / LINK_DIST) * 0.18;
-            const isOrangeLink = particles[i].isOrange || particles[j].isOrange;
-            ctx.beginPath();
-            ctx.moveTo(particles[i].x, particles[i].y);
-            ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = isOrangeLink
-              ? `rgba(232,97,26,${alpha * 1.6})`
-              : `rgba(160,180,220,${alpha})`;
-            ctx.lineWidth = 0.6;
-            ctx.stroke();
-          }
-        }
-      }
-
-      // Draw dots
-      for (const p of particles) {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = p.isOrange
-          ? `rgba(232,97,26,0.8)`
-          : `rgba(160,180,220,0.5)`;
-        ctx.fill();
-      }
-
-      raf = requestAnimationFrame(draw);
-    };
-
-    init();
-    draw();
-
-    const ro = new ResizeObserver(init);
-    ro.observe(canvas);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      ro.disconnect();
-      canvas.removeEventListener("mousemove", onMouse);
-      canvas.removeEventListener("mouseleave", onLeave);
-    };
+    return pts;
   }, []);
 
+  const geo = useMemo(() => {
+    const verts: number[] = [];
+    for (let i = 0; i < count; i++) {
+      const a = Math.floor(Math.random() * nodeCount);
+      const b = Math.floor(Math.random() * nodeCount);
+      verts.push(...positions[a].toArray(), ...positions[b].toArray());
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
+    return g;
+  }, [positions, count]);
+
   return (
-    <canvas
-      ref={canvasRef}
-      className="absolute inset-0 w-full h-full"
-      aria-hidden="true"
-    />
+    <lineSegments geometry={geo}>
+      <lineBasicMaterial color="#E8611A" transparent opacity={0.18} />
+    </lineSegments>
   );
 }
 
-/* ─────────────────────────────────────────────
-   MAGNETIC CURSOR FOLLOWER
-───────────────────────────────────────────── */
-function MagneticCursor() {
-  const mx = useMotionValue(-100);
-  const my = useMotionValue(-100);
-  const cx = useSpring(mx, { stiffness: 200, damping: 28 });
-  const cy = useSpring(my, { stiffness: 200, damping: 28 });
-  const [isHovering, setIsHovering] = useState(false);
-
-  useEffect(() => {
-    const move = (e: MouseEvent) => { mx.set(e.clientX); my.set(e.clientY); };
-    const over = (e: MouseEvent) => {
-      const el = e.target as HTMLElement;
-      setIsHovering(!!el.closest("button, a"));
-    };
-    window.addEventListener("mousemove", move);
-    window.addEventListener("mouseover", over);
-    return () => {
-      window.removeEventListener("mousemove", move);
-      window.removeEventListener("mouseover", over);
-    };
-  }, [mx, my]);
-
+/* ── Central glowing orb ── */
+function CoreOrb() {
+  const meshRef = useRef<THREE.Mesh>(null);
+  useFrame((_, d) => {
+    if (meshRef.current) meshRef.current.rotation.y += d * 0.3;
+  });
   return (
-    <motion.div
-      className="pointer-events-none fixed top-0 left-0 z-[999] hidden lg:block"
-      style={{ x: cx, y: cy, translateX: "-50%", translateY: "-50%" }}
-    >
-      <motion.div
-        className="rounded-full border border-[#E8611A]/60 bg-[#E8611A]/10 backdrop-blur-sm"
-        animate={{ width: isHovering ? 48 : 24, height: isHovering ? 48 : 24 }}
-        transition={{ type: "spring", stiffness: 400, damping: 30 }}
+    <mesh ref={meshRef}>
+      <icosahedronGeometry args={[0.9, 4]} />
+      <MeshDistortMaterial
+        color="#E8611A"
+        emissive="#E8611A"
+        emissiveIntensity={0.6}
+        distort={0.35}
+        speed={2}
+        transparent
+        opacity={0.15}
+        wireframe
       />
-    </motion.div>
+    </mesh>
   );
 }
 
-/* ─────────────────────────────────────────────
-   CHAR SPLIT ANIMATION
-───────────────────────────────────────────── */
-function AnimatedText({ text, className, delay = 0 }: { text: string; className?: string; delay?: number }) {
-  const chars = text.split("");
+/* ── Orbiting rings ── */
+function OrbitRing({ radius, speed, tilt, color }: { radius: number; speed: number; tilt: number; color: string }) {
+  const ref = useRef<THREE.Mesh>(null);
+  useFrame((_, d) => { if (ref.current) ref.current.rotation.z += d * speed; });
   return (
-    <span className={className} aria-label={text}>
-      {chars.map((c, i) => (
-        <motion.span
-          key={i}
-          className="inline-block"
-          initial={{ y: "110%", opacity: 0 }}
-          animate={{ y: "0%", opacity: 1 }}
-          transition={{
-            duration: 0.6,
-            delay: delay + i * 0.028,
-            ease: [0.16, 1, 0.3, 1],
-          }}
-        >
-          {c === " " ? "\u00A0" : c}
-        </motion.span>
-      ))}
-    </span>
+    <mesh ref={ref} rotation={[tilt, 0, 0]}>
+      <torusGeometry args={[radius, 0.008, 8, 80]} />
+      <meshBasicMaterial color={color} transparent opacity={0.25} />
+    </mesh>
   );
 }
 
-/* ─────────────────────────────────────────────
-   ANIMATED COUNTER
-───────────────────────────────────────────── */
+/* ── Orbiting particle balls ── */
+function OrbiterDot({ radius, speed, offset, color }: { radius: number; speed: number; offset: number; color: string }) {
+  const ref = useRef<THREE.Group>(null);
+  useFrame(({ clock }) => {
+    if (!ref.current) return;
+    const t = clock.elapsedTime * speed + offset;
+    ref.current.position.set(Math.cos(t) * radius, Math.sin(t * 0.4) * 0.3, Math.sin(t) * radius);
+  });
+  return (
+    <Trail width={0.6} length={8} color={color} attenuation={(t) => t * t}>
+      <group ref={ref}>
+        <mesh>
+          <sphereGeometry args={[0.04, 8, 8]} />
+          <meshBasicMaterial color={color} />
+        </mesh>
+      </group>
+    </Trail>
+  );
+}
+
+/* ── Background star field ── */
+function StarField() {
+  const geo = useMemo(() => {
+    const verts = new Float32Array(4000 * 3);
+    for (let i = 0; i < 4000; i++) {
+      verts[i * 3] = (Math.random() - 0.5) * 40;
+      verts[i * 3 + 1] = (Math.random() - 0.5) * 40;
+      verts[i * 3 + 2] = (Math.random() - 0.5) * 40;
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.Float32BufferAttribute(verts, 3));
+    return g;
+  }, []);
+  return (
+    <points geometry={geo}>
+      <pointsMaterial size={0.04} color="#8896B0" sizeAttenuation transparent opacity={0.5} />
+    </points>
+  );
+}
+
+/* ── Floating geometric accent pieces ── */
+function FloatingGeo({ pos, shape }: { pos: [number, number, number]; shape: "box" | "octahedron" | "tetra" }) {
+  const ref = useRef<THREE.Mesh>(null);
+  useFrame((_, d) => {
+    if (!ref.current) return;
+    ref.current.rotation.x += d * 0.3;
+    ref.current.rotation.y += d * 0.4;
+  });
+  return (
+    <Float speed={1.5} rotationIntensity={0} floatIntensity={1.5} floatingRange={[-0.15, 0.15]}>
+      <mesh ref={ref} position={pos}>
+        {shape === "box" && <boxGeometry args={[0.2, 0.2, 0.2]} />}
+        {shape === "octahedron" && <octahedronGeometry args={[0.18]} />}
+        {shape === "tetra" && <tetrahedronGeometry args={[0.2]} />}
+        <meshStandardMaterial
+          color="#E8611A"
+          emissive="#E8611A"
+          emissiveIntensity={0.4}
+          metalness={0.8}
+          roughness={0.2}
+          wireframe
+        />
+      </mesh>
+    </Float>
+  );
+}
+
+/* ── Main scene group that follows mouse ── */
+function Scene({ mouse }: { mouse: React.MutableRefObject<{ x: number; y: number }> }) {
+  const groupRef = useRef<THREE.Group>(null);
+  useFrame(() => {
+    if (!groupRef.current) return;
+    groupRef.current.rotation.y += (mouse.current.x * 0.3 - groupRef.current.rotation.y) * 0.03;
+    groupRef.current.rotation.x += (-mouse.current.y * 0.2 - groupRef.current.rotation.x) * 0.03;
+  });
+
+  return (
+    <group ref={groupRef}>
+      <StarField />
+      <CoreOrb />
+      <NeuralNodes count={120} />
+      <NeuralLines count={60} />
+
+      <OrbitRing radius={3.2} speed={0.12} tilt={0.4} color="#E8611A" />
+      <OrbitRing radius={3.8} speed={-0.07} tilt={1.2} color="#1B5FAA" />
+      <OrbitRing radius={4.4} speed={0.05} tilt={0.8} color="#E8611A" />
+
+      <OrbiterDot radius={3.2} speed={0.5} offset={0} color="#E8611A" />
+      <OrbiterDot radius={3.8} speed={0.35} offset={2} color="#60A5FA" />
+      <OrbiterDot radius={4.4} speed={0.25} offset={4} color="#E8611A" />
+
+      <FloatingGeo pos={[-4, 1.5, -1]} shape="octahedron" />
+      <FloatingGeo pos={[4, -1, -2]} shape="box" />
+      <FloatingGeo pos={[-3, -2, 0]} shape="tetra" />
+      <FloatingGeo pos={[4.5, 2, 1]} shape="octahedron" />
+    </group>
+  );
+}
+
+/* ── Camera controller ── */
+function CameraRig() {
+  const { camera } = useThree();
+  useFrame(() => {
+    camera.position.z += (6 - camera.position.z) * 0.02;
+  });
+  return null;
+}
+
+/* ── Counter ── */
 function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
   const [val, setVal] = useState(0);
   useEffect(() => {
@@ -220,30 +246,28 @@ function Counter({ to, suffix = "" }: { to: number; suffix?: string }) {
     let raf: number;
     const animate = (ts: number) => {
       if (!start) start = ts;
-      const p = Math.min((ts - start) / 1500, 1);
-      const ease = 1 - Math.pow(1 - p, 3);
-      setVal(Math.round(ease * to * 10) / 10);
+      const p = Math.min((ts - start) / 1600, 1);
+      const ease = 1 - Math.pow(1 - p, 4);
+      setVal(p < 1 ? ease * to : to);
       if (p < 1) raf = requestAnimationFrame(animate);
     };
-    const t = setTimeout(() => { raf = requestAnimationFrame(animate); }, 800);
-    return () => { clearTimeout(t); cancelAnimationFrame(raf); };
+    const timer = setTimeout(() => { raf = requestAnimationFrame(animate); }, 700);
+    return () => { clearTimeout(timer); cancelAnimationFrame(raf); };
   }, [to]);
-  return <>{val % 1 !== 0 ? val.toFixed(1) : Math.floor(val)}{suffix}</>;
+  return <>{to % 1 !== 0 ? val.toFixed(1) : Math.floor(val)}{suffix}</>;
 }
 
-/* ─────────────────────────────────────────────
-   MARQUEE STRIP
-───────────────────────────────────────────── */
-const STACK = ["OpenAI", "AWS", "Docker", "Python", "Next.js", "MongoDB", "TensorFlow", "PostgreSQL", "Redis", "Kubernetes", "PyTorch", "FastAPI"];
+/* ── Marquee ── */
+const TECH = ["OpenAI", "AWS", "Docker", "Python", "Next.js", "MongoDB", "TensorFlow", "Kubernetes", "PyTorch", "FastAPI", "Redis", "GraphQL"];
 
 function Marquee() {
-  const items = [...STACK, ...STACK];
+  const items = [...TECH, ...TECH];
   return (
-    <div className="relative overflow-hidden py-4">
-      <div className="flex animate-marquee gap-12 whitespace-nowrap w-max">
+    <div className="overflow-hidden py-3">
+      <div style={{ display: "flex", gap: "3rem", width: "max-content", animation: "marquee 30s linear infinite" }}>
         {items.map((t, i) => (
-          <span key={i} className="text-[13px] font-mono text-[#4F617A] tracking-widest uppercase flex items-center gap-3">
-            <span className="w-1 h-1 rounded-full bg-[#E8611A] inline-block opacity-60" />
+          <span key={i} style={{ fontSize: "0.7rem", fontFamily: "monospace", color: "#4F617A", textTransform: "uppercase", letterSpacing: "0.15em", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+            <span style={{ width: 4, height: 4, borderRadius: "50%", background: "#E8611A", opacity: 0.7, display: "inline-block" }} />
             {t}
           </span>
         ))}
@@ -252,174 +276,174 @@ function Marquee() {
   );
 }
 
-/* ─────────────────────────────────────────────
-   FLOATING STATUS CARDS
-───────────────────────────────────────────── */
-const CARDS = [
-  { label: "AI Engine", value: "Active", color: "#10B981", delay: 0 },
-  { label: "Accuracy", value: "99.4%", color: "#E8611A", delay: 0.5 },
-  { label: "Latency", value: "< 50ms", color: "#60A5FA", delay: 1 },
-];
-
-/* ─────────────────────────────────────────────
-   MAIN HERO
-───────────────────────────────────────────── */
+/* ── MAIN HERO ── */
 export default function Hero() {
+  const mouse = useMouse();
   const scroll = (id: string) => document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
 
   return (
     <>
-      <MagneticCursor />
+      <section id="home" className="relative w-full h-screen overflow-hidden bg-[#04080F]">
 
-      <section
-        id="home"
-        className="relative min-h-screen flex flex-col overflow-hidden bg-[#070E1A]"
-      >
-        {/* Neural Mesh */}
-        <NeuralCanvas />
+        {/* 3D Canvas — full screen */}
+        <div className="absolute inset-0">
+          <Canvas
+            camera={{ position: [0, 0, 10], fov: 55 }}
+            gl={{ antialias: true, alpha: false }}
+            dpr={[1, 2]}
+          >
+            <color attach="background" args={["#04080F"]} />
+            <fog attach="fog" args={["#04080F", 12, 30]} />
+            <ambientLight intensity={0.3} />
+            <pointLight position={[0, 0, 0]} intensity={2} color="#E8611A" distance={8} decay={2} />
+            <pointLight position={[5, 3, 2]} intensity={0.5} color="#1B5FAA" />
+            <CameraRig />
+            <Scene mouse={mouse} />
+          </Canvas>
+        </div>
 
-        {/* Atmospheric glows */}
-        <div className="absolute top-[-10%] left-[-5%] w-[700px] h-[700px] rounded-full bg-[#E8611A]/[0.04] blur-[130px] pointer-events-none" />
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full bg-[#1B2A4A]/60 blur-[120px] pointer-events-none" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] rounded-full bg-[#0C1A2E]/50 blur-[160px] pointer-events-none" />
-
-        {/* MAIN CONTENT */}
+        {/* Radial vignette overlay */}
         <div
-          className="relative z-10 flex flex-col items-center justify-center text-center min-h-screen px-6 pt-20 pb-0"
-          style={{ cursor: "none" }}
-        >
+          className="absolute inset-0 pointer-events-none"
+          style={{ background: "radial-gradient(ellipse at center, transparent 30%, #04080F 100%)" }}
+        />
+
+        {/* CENTER TEXT */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-10 px-6 text-center pointer-events-none">
+
           {/* Badge */}
           <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            className="mb-6 pointer-events-auto"
           >
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#E8611A]/30 bg-[#E8611A]/[0.07] backdrop-blur-sm">
+            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border"
+              style={{ borderColor: "rgba(232,97,26,0.35)", background: "rgba(232,97,26,0.08)", backdropFilter: "blur(12px)" }}>
               <span className="w-1.5 h-1.5 rounded-full bg-[#E8611A] animate-pulse" />
-              <span className="text-[11px] font-mono text-[#E8611A] uppercase tracking-[0.18em]">AI Engineering Company</span>
+              <span style={{ fontSize: "0.65rem", fontFamily: "monospace", color: "#E8611A", letterSpacing: "0.18em", textTransform: "uppercase" }}>
+                Cortexia AI · Intelligence Engine Active
+              </span>
             </span>
           </motion.div>
 
-          {/* Headline — char split */}
-          <div className="font-display font-bold leading-[0.95] mb-6 overflow-hidden">
-            <div
-              className="text-[clamp(3rem,9vw,7rem)] text-white block overflow-hidden"
-              style={{ lineHeight: 1.0 }}
+          {/* HERO TEXT */}
+          <div className="overflow-hidden mb-2">
+            <motion.h1
+              className="font-display font-bold text-white"
+              style={{ fontSize: "clamp(3.2rem, 9vw, 7.5rem)", lineHeight: 0.95, letterSpacing: "-0.025em" }}
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: "0%", opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
             >
-              <AnimatedText text="Engineering" delay={0.1} />
-            </div>
-            <div
-              className="text-[clamp(3rem,9vw,7rem)] block overflow-hidden"
+              Engineering
+            </motion.h1>
+          </div>
+          <div className="overflow-hidden mb-6">
+            <motion.h1
+              className="font-display font-bold"
               style={{
-                lineHeight: 1.0,
-                background: "linear-gradient(135deg, #E8611A 0%, #F5A572 50%, #E8611A 100%)",
+                fontSize: "clamp(3.2rem, 9vw, 7.5rem)",
+                lineHeight: 0.95,
+                letterSpacing: "-0.025em",
+                background: "linear-gradient(90deg, #E8611A 0%, #FFB380 45%, #E8611A 100%)",
                 backgroundSize: "200% auto",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
                 animation: "shimmer 3s linear infinite",
               }}
+              initial={{ y: "100%", opacity: 0 }}
+              animate={{ y: "0%", opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
             >
-              <AnimatedText text="Intelligence." delay={0.3} />
-            </div>
+              Intelligence.
+            </motion.h1>
           </div>
 
-          {/* Sub */}
           <motion.p
-            className="text-[#8896B0] text-[clamp(1rem,2vw,1.2rem)] font-light max-w-[560px] leading-relaxed mb-10"
+            className="text-[#8896B0] font-light max-w-lg mb-10"
+            style={{ fontSize: "clamp(0.95rem, 1.8vw, 1.15rem)", lineHeight: 1.7 }}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.7, delay: 0.55 }}
           >
-            We build custom AI systems, intelligent automation platforms, and enterprise software 
-            that transform how modern businesses operate and scale.
+            We build AI systems, automation platforms, and enterprise software that 
+            transform how modern businesses operate and scale.
           </motion.p>
 
           {/* CTAs */}
           <motion.div
-            className="flex flex-wrap items-center justify-center gap-4 mb-16"
+            className="flex flex-wrap items-center justify-center gap-4 mb-12 pointer-events-auto"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1, duration: 0.6 }}
+            transition={{ duration: 0.7, delay: 0.7 }}
           >
             <button
               onClick={() => scroll("#services")}
-              className="group relative overflow-hidden flex items-center gap-2 px-7 py-3.5 rounded-xl bg-[#E8611A] text-white text-sm font-semibold shadow-[0_0_40px_rgba(232,97,26,0.4)] hover:shadow-[0_0_60px_rgba(232,97,26,0.6)] transition-all duration-300 hover:-translate-y-0.5"
+              className="group relative overflow-hidden flex items-center gap-2 px-8 py-4 rounded-xl text-white text-sm font-semibold"
+              style={{ background: "#E8611A", boxShadow: "0 0 50px rgba(232,97,26,0.5)", transition: "all 0.3s" }}
             >
-              {/* Shimmer overlay */}
-              <span className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+              <span className="absolute inset-0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"
+                style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)" }} />
               Explore Services
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
-
             <button
               onClick={() => scroll("#work")}
-              className="flex items-center gap-2 px-7 py-3.5 rounded-xl border border-white/[0.12] text-[#8896B0] text-sm font-semibold hover:border-[#E8611A]/40 hover:text-white backdrop-blur-sm transition-all duration-300 hover:-translate-y-0.5"
+              className="flex items-center gap-2 px-8 py-4 rounded-xl text-sm font-semibold"
+              style={{ border: "1px solid rgba(255,255,255,0.12)", color: "#8896B0", backdropFilter: "blur(12px)", transition: "all 0.3s" }}
             >
               View Our Work
             </button>
           </motion.div>
 
-          {/* Stats Row */}
+          {/* Stats */}
           <motion.div
-            className="flex gap-12 sm:gap-20 mb-0"
+            className="flex gap-14"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1.3, duration: 0.6 }}
+            transition={{ delay: 0.9 }}
           >
-            {[
-              { to: 50, suffix: "+", label: "Projects" },
-              { to: 99.9, suffix: "%", label: "Uptime SLA" },
-              { to: 30, suffix: "+", label: "AI Systems" },
-            ].map((s) => (
+            {[{ to: 50, suffix: "+", label: "Projects" }, { to: 99.9, suffix: "%", label: "Uptime" }, { to: 30, suffix: "+", label: "AI Systems" }].map((s) => (
               <div key={s.label} className="text-center">
-                <div className="font-display text-3xl font-bold text-white mb-1">
+                <div className="font-display text-2xl font-bold text-white">
                   <Counter to={s.to} suffix={s.suffix} />
                 </div>
-                <div className="text-[10px] text-[#4F617A] font-mono uppercase tracking-widest">{s.label}</div>
+                <div style={{ fontSize: "0.65rem", color: "#4F617A", fontFamily: "monospace", textTransform: "uppercase", letterSpacing: "0.15em", marginTop: 2 }}>
+                  {s.label}
+                </div>
               </div>
             ))}
           </motion.div>
         </div>
 
-        {/* Floating Cards */}
-        {CARDS.map((c, i) => (
-          <motion.div
-            key={c.label}
-            className="hidden lg:block absolute z-20"
-            style={{
-              left: i === 0 ? "7%" : i === 2 ? "auto" : undefined,
-              right: i === 2 ? "7%" : undefined,
-              top: "50%",
-            }}
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-            animate={{
-              opacity: 1,
-              scale: 1,
-              y: [0, -10, 0],
-              transition: { delay: 1.4 + c.delay, duration: 0.6, y: { delay: 1.8 + c.delay, duration: 3 + i * 0.5, repeat: Infinity, ease: "easeInOut" } }
-            }}
-          >
-            <div className="card rounded-2xl px-5 py-4 border border-white/[0.08] shadow-[0_8px_40px_rgba(0,0,0,0.4)] backdrop-blur-xl">
-              <div className="text-[10px] font-mono text-[#4F617A] uppercase tracking-widest mb-1">{c.label}</div>
-              <div className="font-display text-lg font-bold" style={{ color: c.color }}>{c.value}</div>
-            </div>
-          </motion.div>
-        ))}
-
-        {/* Bottom marquee strip */}
+        {/* Scroll indicator */}
         <motion.div
-          className="absolute bottom-0 inset-x-0 border-t border-white/[0.06] bg-[#070E1A]/80 backdrop-blur-sm z-20"
+          className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center gap-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.6, duration: 0.6 }}
+          transition={{ delay: 1.4 }}
+        >
+          <span style={{ fontSize: "0.6rem", fontFamily: "monospace", color: "#4F617A", textTransform: "uppercase", letterSpacing: "0.15em" }}>Scroll</span>
+          <motion.div
+            className="w-px bg-[#E8611A]"
+            style={{ height: 30, originY: 0 }}
+            animate={{ scaleY: [0, 1, 0] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+          />
+        </motion.div>
+
+        {/* Bottom tech marquee */}
+        <motion.div
+          className="absolute bottom-0 inset-x-0 z-20"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.06)", background: "rgba(4,8,15,0.7)", backdropFilter: "blur(12px)" }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.2 }}
         >
           <Marquee />
         </motion.div>
-
-        {/* Fade to next section */}
-        <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-t from-[#0C1422] to-transparent pointer-events-none z-10" />
       </section>
 
       <style>{`
@@ -428,11 +452,8 @@ export default function Hero() {
           100% { background-position: 200% center; }
         }
         @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-          animation: marquee 28s linear infinite;
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
         }
       `}</style>
     </>

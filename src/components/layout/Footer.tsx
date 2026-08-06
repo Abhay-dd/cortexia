@@ -13,7 +13,7 @@ export default function Footer() {
   const scroll = (href: string) => document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
 
   return (
-    <footer className="bg-[#0C1422] border-t border-white/[0.06] py-14">
+    <footer className="bg-[#04080F] border-t border-white/[0.06] py-14">
       <div className="container">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-10 border-b border-white/[0.06]">
           <div>

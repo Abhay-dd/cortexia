@@ -15,7 +15,7 @@ const ScrollProgress = dynamic(() => import("@/components/effects/ScrollProgress
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#0C1422]">
+    <div className="min-h-screen bg-[#070E1A]">
       <ScrollProgress />
       <Navbar />
       <main>
