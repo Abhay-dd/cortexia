@@ -2,156 +2,143 @@
 
 import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
-import { X, Check } from "lucide-react";
+import { X, Check, ArrowRight, ShieldAlert, Sparkles } from "lucide-react";
 
-const PAINS = [
-  "Spending 40+ hours/week on tasks that should be automated",
-  "Your team manually copying data between systems all day",
-  "Customer service overwhelmed, response times too slow",
-  "Competitors are moving faster with AI — you're falling behind",
-  "You know AI could help, but don't know where to start",
-  "Hired developers, but the software never quite works right",
+const COMPARISONS = [
+  {
+    pain: "Teams spending 40+ hours weekly on repetitive manual operational tasks",
+    gain: "Autonomous AI agents execute complex workflows 24/7 with zero human error",
+    metric: "85% Efficiency Boost"
+  },
+  {
+    pain: "Fragmented software tools causing data bottlenecks & delayed decisions",
+    gain: "Unified intelligent pipeline synchronizes CRM, ERP & analytics in real-time",
+    metric: "Instant Data Sync"
+  },
+  {
+    pain: "Customer support bottlenecks leading to long wait times & lost revenue",
+    gain: "Domain-trained AI copilots resolve 90%+ inquiries with instant sub-second response",
+    metric: "sub-1s Resolution"
+  },
+  {
+    pain: "Off-the-shelf software fails to match your exact proprietary business logic",
+    gain: "Bespoke fine-tuned AI architecture built precisely around your operational blueprint",
+    metric: "100% Custom Tailored"
+  }
 ];
-
-const GAINS = [
-  "AI handles repetitive work autonomously, 24/7",
-  "All your systems talk to each other intelligently",
-  "Instant AI-powered customer responses, any scale",
-  "You lead your market with a proprietary AI advantage",
-  "We build the exact AI system your business needs",
-  "Production software, built right. Delivered. Maintained.",
-];
-
-function FlipCard({ pain, gain, index }: { pain: string; gain: string; index: number }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-40px" });
-
-  return (
-    <motion.div
-      ref={ref}
-      className="relative"
-      style={{ perspective: 1000 }}
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.5, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
-    >
-      {/* Pain */}
-      <div
-        className="p-5 rounded-2xl border flex items-start gap-3"
-        style={{
-          background: "rgba(255,60,60,0.04)",
-          borderColor: "rgba(255,60,60,0.12)",
-        }}
-      >
-        <div className="flex-shrink-0 w-5 h-5 rounded-full bg-red-500/20 flex items-center justify-center mt-0.5">
-          <X className="w-2.5 h-2.5 text-red-400" />
-        </div>
-        <p className="text-[#8896B0] text-sm font-light leading-relaxed">{pain}</p>
-      </div>
-
-      {/* Arrow */}
-      <div className="flex items-center justify-center py-2">
-        <motion.div
-          className="w-px bg-gradient-to-b from-red-500/30 to-[#E8611A]/50"
-          style={{ height: 20 }}
-          initial={{ scaleY: 0 }}
-          animate={inView ? { scaleY: 1 } : {}}
-          transition={{ duration: 0.4, delay: index * 0.08 + 0.3 }}
-        />
-      </div>
-
-      {/* Gain */}
-      <div
-        className="p-5 rounded-2xl border flex items-start gap-3"
-        style={{
-          background: "rgba(232,97,26,0.05)",
-          borderColor: "rgba(232,97,26,0.2)",
-        }}
-      >
-        <div className="flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center mt-0.5"
-          style={{ background: "rgba(232,97,26,0.2)" }}>
-          <Check className="w-2.5 h-2.5 text-[#E8611A]" />
-        </div>
-        <p className="text-white text-sm font-medium leading-relaxed">{gain}</p>
-      </div>
-    </motion.div>
-  );
-}
 
 export default function Problem() {
-  const headRef = useRef<HTMLDivElement>(null);
-  const headInView = useInView(headRef, { once: true });
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isInView = useInView(containerRef, { once: true, margin: "-100px" });
 
   return (
-    <section id="problem" className="section" style={{ background: "#070E1A" }}>
-      <div className="container">
-
-        {/* Header */}
-        <div ref={headRef} className="text-center max-w-2xl mx-auto mb-16">
+    <section id="problem" className="section bg-matrix" style={{ background: "#060A10" }}>
+      <div className="container" ref={containerRef}>
+        
+        {/* Section Header */}
+        <div className="text-center max-w-2xl mx-auto mb-20">
           <motion.div
-            className="label justify-center mb-5"
-            initial={{ opacity: 0 }} animate={headInView ? { opacity: 1 } : {}}
+            initial={{ opacity: 0, y: 16 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5 }}
+            className="label-emerald justify-center mb-4"
           >
-            The Transformation
+            Operational Evolution
           </motion.div>
+          
           <motion.h2
-            className="font-display text-[clamp(2rem,4vw,3.2rem)] font-bold text-white leading-[1.1] mb-4"
-            initial={{ opacity: 0, y: 20 }} animate={headInView ? { opacity: 1, y: 0 } : {}}
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.1 }}
+            className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-extrabold text-white leading-[1.08] mb-5"
           >
-            You have a problem. <br />
-            <span className="text-gradient-orange">We have a solution.</span>
+            From Operational Friction to <br />
+            <span className="text-gradient-laser">AI-Powered Superiority.</span>
           </motion.h2>
+
           <motion.p
-            className="text-[#8896B0] font-light leading-relaxed text-base"
-            initial={{ opacity: 0, y: 16 }} animate={headInView ? { opacity: 1, y: 0 } : {}}
+            initial={{ opacity: 0, y: 16 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-[#8FA3BF] text-base font-light leading-relaxed"
           >
-            Every business we&apos;ve worked with had these exact frustrations before working with us.
-            Here&apos;s what we turn them into.
+            Legacy workflows slow down growing enterprise companies. Cortexia AI transforms 
+            manual overhead into high-throughput autonomous intelligence.
           </motion.p>
         </div>
 
-        {/* Column headers */}
-        <div className="grid lg:grid-cols-6 gap-6 mb-4">
-          <div className="lg:col-span-6 grid grid-cols-1 gap-2">
-            <div className="grid grid-cols-2 gap-4 mb-2">
-              <div className="flex items-center gap-2 px-2">
-                <div className="w-2 h-2 rounded-full bg-red-400" />
-                <span className="text-xs font-mono text-[#4F617A] uppercase tracking-wider">Before Cortexia AI</span>
+        {/* Comparison Cards Grid */}
+        <div className="grid md:grid-cols-2 gap-8 mb-16">
+          {COMPARISONS.map((item, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, y: 30 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.6, delay: i * 0.12 }}
+              className="card-chrome rounded-3xl p-8 relative overflow-hidden group"
+            >
+              {/* Metric Tag */}
+              <div className="absolute top-6 right-6 px-3.5 py-1 rounded-full bg-[#00FF9D]/10 border border-[#00FF9D]/30 text-[#00FF9D] font-mono text-xs font-bold">
+                {item.metric}
               </div>
-              <div className="flex items-center gap-2 px-2">
-                <div className="w-2 h-2 rounded-full bg-[#E8611A]" />
-                <span className="text-xs font-mono text-[#E8611A] uppercase tracking-wider">After Cortexia AI</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
-        {/* Pain → Gain grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {PAINS.map((p, i) => (
-            <FlipCard key={i} pain={p} gain={GAINS[i]} index={i} />
+              {/* Before Friction */}
+              <div className="mb-6 pb-6 border-b border-white/[0.08]">
+                <div className="flex items-center gap-2.5 mb-2.5 text-rose-400 font-mono text-xs uppercase tracking-wider font-semibold">
+                  <div className="w-5 h-5 rounded-full bg-rose-500/20 flex items-center justify-center">
+                    <X className="w-3 h-3 text-rose-400" />
+                  </div>
+                  Legacy Pain Point
+                </div>
+                <p className="text-[#8FA3BF] text-sm font-light leading-relaxed">
+                  {item.pain}
+                </p>
+              </div>
+
+              {/* After Cortexia */}
+              <div>
+                <div className="flex items-center gap-2.5 mb-2.5 text-[#00FF9D] font-mono text-xs uppercase tracking-wider font-semibold">
+                  <div className="w-5 h-5 rounded-full bg-[#00FF9D]/20 flex items-center justify-center">
+                    <Check className="w-3 h-3 text-[#00FF9D]" />
+                  </div>
+                  Cortexia AI Outcome
+                </div>
+                <p className="text-white text-base font-medium leading-relaxed">
+                  {item.gain}
+                </p>
+              </div>
+            </motion.div>
           ))}
         </div>
 
-        {/* Bottom CTA bar */}
+        {/* Guarantee Banner */}
         <motion.div
-          className="mt-14 p-8 rounded-3xl text-center"
-          style={{ background: "linear-gradient(135deg, rgba(232,97,26,0.08) 0%, rgba(27,42,74,0.3) 100%)", border: "1px solid rgba(232,97,26,0.2)" }}
           initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="card-chrome rounded-3xl p-8 border-[#00FF9D]/30 flex flex-col md:flex-row items-center justify-between gap-6"
         >
-          <div className="text-xs font-mono text-[#E8611A] uppercase tracking-widest mb-3">The Cortexia Guarantee</div>
-          <h3 className="font-display text-xl font-bold text-white mb-2">
-            If we can&apos;t solve your problem with AI, we&apos;ll tell you upfront.
-          </h3>
-          <p className="text-[#8896B0] text-sm font-light">
-            We do a free technical discovery session before any engagement. No pressure. No wasted time.
-          </p>
+          <div className="flex items-center gap-5">
+            <div className="w-14 h-14 rounded-2xl bg-[#00FF9D]/15 border border-[#00FF9D]/30 flex items-center justify-center text-[#00FF9D] flex-shrink-0">
+              <Sparkles className="w-7 h-7" />
+            </div>
+            <div>
+              <h3 className="font-display text-xl font-bold text-white mb-1">
+                Zero-Risk Engineering Guarantee
+              </h3>
+              <p className="text-[#8FA3BF] text-sm font-light">
+                We perform an architectural discovery session before any engagement. 100% technical transparency.
+              </p>
+            </div>
+          </div>
+          
+          <button
+            onClick={() => document.querySelector("#contact")?.scrollIntoView({ behavior: "smooth" })}
+            className="btn-emerald text-xs py-3.5 px-6 whitespace-nowrap"
+          >
+            Request Free Discovery
+            <ArrowRight className="w-4 h-4 text-black" />
+          </button>
         </motion.div>
 
       </div>

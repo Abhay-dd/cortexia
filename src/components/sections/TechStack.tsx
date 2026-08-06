@@ -1,57 +1,55 @@
 "use client";
 
-
 import { motion } from "framer-motion";
 
 const STACK = [
-  { name: "OpenAI", role: "LLMs & Foundation Models", color: "#10a37f" },
-  { name: "AWS", role: "Cloud Infrastructure", color: "#FF9900" },
-  { name: "Docker", role: "Containerization", color: "#2496ED" },
-  { name: "Python", role: "AI & Deep Learning", color: "#3776AB" },
-  { name: "Next.js", role: "Full-Stack Web", color: "#ffffff" },
-  { name: "MongoDB", role: "High-Performance Data", color: "#47A248" },
+  { name: "OpenAI", role: "LLMs & Foundation Models", accent: "#10A37F" },
+  { name: "AWS", role: "Cloud Infrastructure", accent: "#FF9900" },
+  { name: "Docker", role: "Containerization", accent: "#2496ED" },
+  { name: "Python", role: "AI & Deep Learning", accent: "#3776AB" },
+  { name: "Next.js", role: "Full-Stack Web", accent: "#FFFFFF" },
+  { name: "MongoDB", role: "High-Throughput Data", accent: "#47A248" },
 ];
 
 export default function TechStack() {
   return (
-    <section id="technology" className="section bg-[#070E1A]">
+    <section id="technology" className="section bg-matrix" style={{ background: "#060A10" }}>
       <div className="container">
 
-        {/* Header */}
-        <div className="grid lg:grid-cols-2 gap-12 mb-14">
+        <div className="grid lg:grid-cols-2 gap-12 mb-16 items-center">
           <div>
-            <div className="label mb-5">Engineering Stack</div>
-            <h2 className="font-display text-[clamp(2rem,3.5vw,3rem)] font-bold text-white leading-[1.1]">
-              Battle-tested enterprise technologies.
+            <div className="label-emerald mb-4">Infrastructure & Tools</div>
+            <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-extrabold text-white leading-[1.08]">
+              Engineered with <br />
+              <span className="text-gradient-laser">Battle-Tested Tech.</span>
             </h2>
           </div>
-          <div className="flex items-center">
-            <p className="text-[#8896B0] font-light leading-relaxed">
-              We leverage industry-standard infrastructure, battle-tested frameworks, and state-of-the-art
-              AI research tooling to guarantee performance, security, and maintainability.
+          <div>
+            <p className="text-[#8FA3BF] text-base font-light leading-relaxed">
+              We build using industry-standard enterprise frameworks, zero-trust cloud infrastructure, 
+              and state-of-the-art AI tooling to ensure lifetime stability and speed.
             </p>
           </div>
         </div>
 
-        {/* Stack Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {STACK.map((s, i) => (
+          {STACK.map((item, i) => (
             <motion.div
-              key={s.name}
-              initial={{ opacity: 0, y: 16 }}
+              key={item.name}
+              initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.4, delay: i * 0.07 }}
-              className="card rounded-2xl p-6 text-center group"
+              transition={{ duration: 0.4, delay: i * 0.08 }}
+              className="card-chrome rounded-2xl p-6 text-center group"
             >
               <div
-                className="font-display text-lg font-bold mb-1 transition-colors duration-300"
-                style={{ color: s.color }}
+                className="font-display text-xl font-bold mb-1 transition-transform group-hover:scale-105"
+                style={{ color: item.accent }}
               >
-                {s.name}
+                {item.name}
               </div>
-              <div className="text-[10px] text-[#4F617A] font-medium uppercase tracking-wider leading-tight">
-                {s.role}
+              <div className="text-[10px] font-mono text-[#8FA3BF] uppercase tracking-wider">
+                {item.role}
               </div>
             </motion.div>
           ))}
