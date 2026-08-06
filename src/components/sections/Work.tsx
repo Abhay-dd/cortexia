@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, X, ChevronRight, Activity, ShieldCheck, Zap } from "lucide-react";
+import { ArrowUpRight, X } from "lucide-react";
 
 interface Project {
   id: string;
@@ -79,16 +79,16 @@ export default function Work() {
     : PROJECTS.filter((p) => p.category === selectedCategory);
 
   return (
-    <section id="work" className="section bg-matrix" style={{ background: "#060A10" }}>
+    <section id="work" className="section bg-ambient-mesh">
       <div className="container">
 
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 mb-16">
           <div>
-            <div className="label-emerald mb-4">Case Studies</div>
+            <div className="badge-minimal mb-4">Case Studies</div>
             <h2 className="font-display text-[clamp(2.2rem,4vw,3.5rem)] font-extrabold text-white leading-[1.08]">
               Deployed Enterprise <br />
-              <span className="text-gradient-laser">Proven Outcomes.</span>
+              <span className="text-gradient-orange">Proven Outcomes.</span>
             </h2>
           </div>
 
@@ -98,10 +98,10 @@ export default function Work() {
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-5 py-2.5 rounded-full text-xs font-bold transition-all duration-300 ${
+                className={`px-5 py-2.5 rounded-full text-xs font-semibold transition-all duration-300 ${
                   selectedCategory === cat
-                    ? "bg-[#00FF9D] text-black shadow-[0_0_20px_rgba(0,255,157,0.4)]"
-                    : "card-chrome text-[#8FA3BF] hover:text-white"
+                    ? "bg-[#FF6B00] text-white shadow-[0_4px_25px_rgba(255,107,0,0.4)]"
+                    : "card-luxury text-[#A1A1AA] hover:text-white"
                 }`}
               >
                 {cat}
@@ -120,34 +120,34 @@ export default function Work() {
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
               onClick={() => setActiveProject(project)}
-              className="card-chrome rounded-3xl p-8 cursor-pointer group relative overflow-hidden"
+              className="card-luxury p-8 cursor-pointer group relative overflow-hidden"
             >
               <div className="flex items-center justify-between mb-4">
-                <span className="text-xs font-mono text-[#00FF9D] uppercase tracking-wider font-bold">
+                <span className="text-xs font-mono text-[#FF6B00] uppercase tracking-wider font-bold">
                   {project.category}
                 </span>
-                <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-[#00FF9D]/10 text-[#00FF9D] border border-[#00FF9D]/30 uppercase font-semibold">
+                <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-white/5 text-white border border-white/10 uppercase font-semibold">
                   {project.status}
                 </span>
               </div>
 
-              <h3 className="font-display text-2xl font-bold text-white mb-3 group-hover:text-[#00FF9D] transition-colors">
+              <h3 className="font-display text-2xl font-bold text-white mb-3 group-hover:text-[#FF6B00] transition-colors">
                 {project.title}
               </h3>
 
-              <p className="text-[#8FA3BF] text-sm font-light leading-relaxed mb-6">
+              <p className="text-[#A1A1AA] text-sm font-light leading-relaxed mb-6">
                 {project.description}
               </p>
 
               <div className="flex flex-wrap gap-2 mb-6">
                 {project.technologies.slice(0, 4).map((tech) => (
-                  <span key={tech} className="px-3 py-1 rounded-full text-[11px] font-mono bg-[#060A10] text-[#8FA3BF] border border-white/10">
+                  <span key={tech} className="px-3 py-1 rounded-full text-[11px] font-mono bg-white/[0.03] text-[#A1A1AA] border border-white/10">
                     {tech}
                   </span>
                 ))}
               </div>
 
-              <div className="flex items-center gap-2 text-xs font-bold text-[#00FF9D] group-hover:translate-x-1 transition-transform">
+              <div className="flex items-center gap-2 text-xs font-bold text-[#FF6B00] group-hover:translate-x-1 transition-transform">
                 Read Deep Dive Case Study
                 <ArrowUpRight className="w-4 h-4" />
               </div>
@@ -157,7 +157,7 @@ export default function Work() {
 
       </div>
 
-      {/* Case Study Detailed Modal */}
+      {/* Case Study Modal */}
       <AnimatePresence>
         {activeProject && (
           <motion.div
@@ -166,22 +166,22 @@ export default function Work() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            <div className="absolute inset-0 bg-[#060A10]/90 backdrop-blur-3xl" onClick={() => setActiveProject(null)} />
+            <div className="absolute inset-0 bg-[#030305]/90 backdrop-blur-3xl" onClick={() => setActiveProject(null)} />
             
             <motion.div
-              className="relative z-10 w-full max-w-2xl max-h-[88vh] overflow-y-auto card-chrome rounded-3xl p-8 border-[#00FF9D]/30"
+              className="relative z-10 w-full max-w-2xl max-h-[88vh] overflow-y-auto card-luxury p-8 border-white/20"
               initial={{ scale: 0.92, y: 20 }}
               animate={{ scale: 1, y: 0 }}
               exit={{ scale: 0.92, y: 20 }}
             >
               <button
                 onClick={() => setActiveProject(null)}
-                className="absolute top-6 right-6 p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-[#8FA3BF] hover:text-white transition-all"
+                className="absolute top-6 right-6 p-2.5 rounded-full bg-white/5 hover:bg-white/10 text-[#A1A1AA] hover:text-white transition-all"
               >
                 <X className="w-4 h-4" />
               </button>
 
-              <div className="text-xs font-mono text-[#00FF9D] uppercase tracking-wider mb-1 font-bold">
+              <div className="text-xs font-mono text-[#FF6B00] uppercase tracking-wider mb-1 font-bold">
                 {activeProject.category}
               </div>
               <h2 className="font-display text-3xl font-extrabold text-white mb-6">
@@ -189,21 +189,21 @@ export default function Work() {
               </h2>
 
               <div className="space-y-6">
-                <div className="p-5 rounded-2xl bg-[#060A10] border border-white/10">
-                  <div className="text-xs font-mono text-[#8FA3BF] uppercase tracking-wider mb-2">Challenge</div>
-                  <p className="text-sm text-[#8FA3BF] font-light leading-relaxed">{activeProject.challenge}</p>
+                <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10">
+                  <div className="text-xs font-mono text-[#A1A1AA] uppercase tracking-wider mb-2">Challenge</div>
+                  <p className="text-sm text-[#A1A1AA] font-light leading-relaxed">{activeProject.challenge}</p>
                 </div>
 
-                <div className="p-5 rounded-2xl bg-[#00FF9D]/5 border border-[#00FF9D]/20">
-                  <div className="text-xs font-mono text-[#00FF9D] uppercase tracking-wider mb-2 font-bold">Architectural Solution</div>
+                <div className="p-5 rounded-2xl bg-[#FF6B00]/10 border border-[#FF6B00]/30">
+                  <div className="text-xs font-mono text-[#FF6B00] uppercase tracking-wider mb-2 font-bold">Architectural Solution</div>
                   <p className="text-sm text-white font-medium leading-relaxed">{activeProject.solution}</p>
                 </div>
 
                 <div>
-                  <div className="text-xs font-mono text-[#8FA3BF] uppercase tracking-wider mb-3">Technologies Leveraged</div>
+                  <div className="text-xs font-mono text-[#A1A1AA] uppercase tracking-wider mb-3">Technologies Leveraged</div>
                   <div className="flex flex-wrap gap-2">
                     {activeProject.technologies.map((t) => (
-                      <span key={t} className="px-3.5 py-1.5 rounded-full text-xs font-mono bg-[#0B121E] text-[#00FF9D] border border-[#00FF9D]/20">
+                      <span key={t} className="px-3.5 py-1.5 rounded-full text-xs font-mono bg-white/5 text-white border border-white/10">
                         {t}
                       </span>
                     ))}
@@ -211,10 +211,10 @@ export default function Work() {
                 </div>
 
                 <div>
-                  <div className="text-xs font-mono text-[#8FA3BF] uppercase tracking-wider mb-3">Verified Results</div>
+                  <div className="text-xs font-mono text-[#A1A1AA] uppercase tracking-wider mb-3">Verified Results</div>
                   <div className="grid sm:grid-cols-3 gap-3">
                     {activeProject.results.map((res) => (
-                      <div key={res} className="p-4 rounded-2xl bg-[#0B121E] text-center border border-[rgba(0,255,157,0.15)]">
+                      <div key={res} className="p-4 rounded-2xl bg-white/[0.03] text-center border border-white/10">
                         <span className="text-xs font-bold text-white leading-tight block">{res}</span>
                       </div>
                     ))}

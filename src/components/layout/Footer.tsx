@@ -1,12 +1,10 @@
 "use client";
 
-import { COMPANY } from "@/lib/constants";
-
 const LINKS = [
+  { label: "Lab to World", href: "#evolution" },
   { label: "Capabilities", href: "#services" },
   { label: "Methodology", href: "#process" },
-  { label: "Deployed Work", href: "#work" },
-  { label: "Technology", href: "#technology" },
+  { label: "Work", href: "#work" },
   { label: "Products", href: "#products" },
   { label: "Contact", href: "#contact" },
 ];
@@ -15,15 +13,15 @@ export default function Footer() {
   const scroll = (href: string) => document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
 
   return (
-    <footer className="bg-[#060A10] border-t border-[rgba(0,255,157,0.12)] py-14">
+    <footer className="bg-[#030305] border-t border-white/10 py-14">
       <div className="container">
         
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8 pb-10 border-b border-white/5">
           <div>
             <span className="font-display font-bold text-2xl text-white block mb-1">
-              CORTEXIA <span className="text-gradient-laser">AI</span>
+              Cortexia <span className="text-[#FF6B00]">AI</span>
             </span>
-            <p className="text-[#8FA3BF] text-xs font-light">
+            <p className="text-[#A1A1AA] text-xs font-light">
               Engineering Intelligence. Empowering Businesses.
             </p>
           </div>
@@ -33,7 +31,7 @@ export default function Footer() {
               <button
                 key={link.href}
                 onClick={() => scroll(link.href)}
-                className="text-xs font-semibold text-[#8FA3BF] hover:text-[#00FF9D] transition-colors"
+                className="text-xs font-semibold text-[#A1A1AA] hover:text-white transition-colors"
               >
                 {link.label}
               </button>
@@ -42,13 +40,13 @@ export default function Footer() {
         </div>
 
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-xs text-[#4E6178] font-mono">
+          <span className="text-xs text-[#52525B] font-mono">
             © {new Date().getFullYear()} Cortexia AI Inc. All rights reserved.
           </span>
-          <div className="flex gap-6 text-xs text-[#4E6178] font-mono">
+          <div className="flex gap-6 text-xs text-[#52525B] font-mono">
             <button className="hover:text-white transition-colors">Privacy Policy</button>
             <button className="hover:text-white transition-colors">Terms of Service</button>
-            <button className="hover:text-white transition-colors">Security Audit</button>
+            <button className="hover:text-white transition-colors">Security SLA</button>
           </div>
         </div>
 

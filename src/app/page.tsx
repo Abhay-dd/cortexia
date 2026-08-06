@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Hero from "@/components/sections/Hero";
-import Problem from "@/components/sections/Problem";
+import Evolution from "@/components/sections/Evolution";
 import Services from "@/components/sections/Services";
 import Process from "@/components/sections/Process";
 import Work from "@/components/sections/Work";
@@ -16,12 +16,12 @@ const ScrollProgress = dynamic(() => import("@/components/effects/ScrollProgress
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#060A10]">
+    <div className="min-h-screen bg-[#030305]">
       <ScrollProgress />
       <Navbar />
       <main>
         <Hero />
-        <Problem />
+        <Evolution />
         <Services />
         <Process />
         <Work />
